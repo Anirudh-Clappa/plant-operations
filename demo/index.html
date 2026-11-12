@@ -1,1 +1,923 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clappia Plant Suite</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#ffffff;--panel:#f7f9fc;--soft:#f2f5fa;--line:#e5eaf1;--line2:#eef2f7;
+  --ink:#172636;--ink2:#40536a;--mute:#6f8196;--faint:#9aa9bb;
+  --acc:#2196f3;--acc-d:#1479d1;--acc-s:#e9f4fe;
+  --g:#1b9467;--g-s:#e5f6ee;--a:#b3761a;--a-s:#fdf2dc;--r:#cf4558;--r-s:#fdebee;--b:#2f7fd0;--b-s:#e9f2fc;
+  --sh:0 1px 2px rgba(23,38,54,.05),0 6px 20px rgba(23,38,54,.06);
+  --rad:12px;color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;letter-spacing:-.015em;text-wrap:balance}
+h1{font-size:26px;font-weight:700}h2{font-size:18px;font-weight:650}h3{font-size:15px;font-weight:650}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--acc-d);text-decoration:none}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 13px;font-weight:550;color:var(--ink2);white-space:nowrap;transition:.15s}
+.btn:hover{border-color:#cfd8e3;background:var(--panel)}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#fff}.btn.pri:hover{background:var(--acc-d)}
+.btn.soft{background:var(--acc-s);border-color:transparent;color:var(--acc-d)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn.ghost{border-color:transparent;background:none}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8}
+.t-g{background:var(--g-s);color:var(--g)}.t-a{background:var(--a-s);color:var(--a)}.t-r{background:var(--r-s);color:var(--r)}.t-b{background:var(--b-s);color:var(--b)}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--rad);box-shadow:0 1px 2px rgba(23,38,54,.03)}
+.pad{padding:18px}
+.mute{color:var(--mute)}.sm{font-size:12.5px}.lbl{font-size:11px;font-weight:650;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.row{display:flex;align-items:center;gap:10px}.wrap{flex-wrap:wrap}.sp{flex:1}
+.grid{display:grid;gap:14px}
+.av{width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;font-size:11px;font-weight:700;color:#fff;flex:none}
 
+/* login */
+.login{min-height:100vh;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr)}
+.l-art{background:linear-gradient(160deg,#f3f8fe 0%,#eaf3fd 55%,#f6f3fd 100%);padding:44px max(16px,env(safe-area-inset-left,0px));padding-inline:44px;display:flex;flex-direction:column;gap:26px;border-right:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;letter-spacing:-.01em}
+.logo{width:30px;height:30px;border-radius:9px;background:var(--acc);display:grid;place-items:center;color:#fff}
+.l-art h1{font-size:clamp(28px,3.4vw,42px);line-height:1.12;max-width:14ch}
+.l-art p{color:var(--ink2);max-width:46ch;font-size:15px;margin:0}
+.l-list{display:grid;gap:10px;margin-top:auto}
+.l-list div{display:flex;gap:10px;align-items:center;color:var(--ink2);font-weight:500}
+.l-list i{width:22px;height:22px;border-radius:7px;background:#fff;display:grid;place-items:center;color:var(--acc);box-shadow:var(--sh);font-style:normal;font-size:12px}
+.l-form{padding-block:36px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;align-items:center}
+.l-in{width:100%;max-width:640px;display:flex;flex-direction:column;gap:18px;margin:auto 0}
+.steps{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mute);font-weight:550}
+.steps b{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;background:var(--soft);font-size:12px}
+.steps .on{color:var(--ink)}.steps .on b{background:var(--acc);color:#fff}
+.roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.role{text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:13px;display:flex;gap:11px;align-items:center;transition:.15s}
+.role:hover,.role.on{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-s)}
+.role b{display:block;font-weight:650}.role span{font-size:12.5px;color:var(--mute)}
+.role .av{color:#fff;font-size:12.5px}
+.blogo{height:36px;width:auto;display:block}.bsub{font-weight:600;font-size:12.5px;color:var(--mute);border-left:1px solid var(--line);padding-left:10px;white-space:nowrap}
+.cli{display:grid;gap:8px;padding:12px 0;border-top:1px solid var(--line2)}.cli:first-child{border-top:0}
+.cli .q{font-weight:550}.cli input{border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:100%}
+.opt{display:inline-flex;gap:6px;flex-wrap:wrap}.opt label{cursor:pointer}.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt span{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:5px 14px;font-size:13px;font-weight:600;color:var(--ink2);background:#fff}
+.opt input:checked+span.o{background:var(--g-s);border-color:var(--g);color:var(--g)}.opt input:checked+span.x{background:var(--r-s);border-color:var(--r);color:var(--r)}.opt input:checked+span.n{background:var(--soft);border-color:#b9c4d2;color:var(--ink)}
+.opt input:focus-visible+span{outline:2px solid var(--acc);outline-offset:2px}
+.clc{display:grid;gap:10px;text-align:left}.newtag{background:var(--acc);color:#fff;border-radius:99px;font-size:10.5px;font-weight:700;padding:1px 7px;margin-left:6px;vertical-align:1px}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:6px 12px;font-weight:550;font-size:13px;color:var(--ink2)}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.cos{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;max-height:290px;overflow:auto;padding:3px}
+.co{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;text-align:left;font-weight:500}
+.co.on{border-color:var(--acc);background:var(--acc-s);color:var(--acc-d);font-weight:650}
+
+/* shell */
+.shell{display:grid;grid-template-columns:264px minmax(0,1fr);min-height:100vh}
+.side{background:var(--panel);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;padding:14px 10px 14px max(10px,env(safe-area-inset-left,0px))}
+.side .brand{padding:6px 8px 14px}
+.ws{margin:0 4px 10px;padding:10px 12px;border-radius:10px;background:#fff;border:1px solid var(--line)}
+.ws b{display:block;font-size:13px;line-height:1.3}.ws span{font-size:12px;color:var(--mute)}
+.nl{padding:12px 10px 5px}
+.ni{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:7px 10px;border-radius:8px;color:var(--ink2);font-weight:520;text-align:left}
+.ni:hover{background:#edf1f7}.ni.on{background:var(--acc-s);color:var(--acc-d);font-weight:650}
+.ni .cv{margin-left:auto;transition:.15s;width:14px;height:14px;color:var(--faint)}.ni.open .cv{transform:rotate(90deg)}
+.ni .n{margin-left:auto;background:var(--acc);color:#fff;border-radius:99px;font-size:11px;padding:0 6px;font-weight:700}
+.sub{display:grid;margin:2px 0 6px 19px;padding-left:10px;border-left:1px solid var(--line)}
+.sub button{border:0;background:none;text-align:left;padding:5px 9px;border-radius:7px;color:var(--mute);font-size:13px}
+.sub button:hover{color:var(--ink);background:#edf1f7}.sub button.on{color:var(--acc-d);font-weight:650;background:#fff;box-shadow:0 0 0 1px var(--line)}
+.custom{margin:12px 4px 4px;border:1px dashed #b9cbe0;border-radius:11px;padding:12px;background:#fff;display:block;color:var(--ink)}
+.custom b{display:flex;gap:7px;align-items:center;font-size:13px}.custom span{font-size:12px;color:var(--mute)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;height:58px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.crumb{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.crumb span{color:var(--mute);font-weight:500}
+.srch{position:relative;flex:1;max-width:360px;margin-left:auto}
+.srch input{width:100%;border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:7px 12px 7px 34px;outline:0}
+.srch input:focus{border-color:var(--acc);background:#fff;box-shadow:0 0 0 3px var(--acc-s)}
+.srch .ic{position:absolute;left:10px;top:9px;color:var(--faint)}
+.pop{position:absolute;top:calc(100% + 6px);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh);z-index:40;overflow:hidden}
+.srch .pop{left:0;right:0}.srch .pop button{display:block;width:100%;text-align:left;border:0;background:none;padding:8px 12px}.srch .pop button:hover{background:var(--panel)}
+.ib{position:relative;width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:var(--ink2);flex:none}
+.ib .dot{position:absolute;top:-4px;right:-4px;background:var(--r);color:#fff;border-radius:99px;font-size:10px;font-weight:700;padding:0 5px;border:2px solid #fff}
+.npop{right:0;width:min(360px,calc(100vw - 32px))}
+.nrow{display:flex;gap:10px;padding:11px 14px;border-top:1px solid var(--line2);cursor:pointer}.nrow:hover{background:var(--panel)}
+.nrow.un{background:#f6faff}
+.main{padding-block:22px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));min-width:0}
+.in{max-width:1320px;margin:0 auto;display:grid;gap:18px;min-width:0}
+.in>*{min-width:0}
+.ph{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.ph p{margin:3px 0 0;color:var(--mute);max-width:70ch}
+.mi{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
+.mi .ic{width:22px;height:22px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{padding:14px 16px}.kpi b{display:block;font-size:24px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.kpi small{font-size:12px;color:var(--mute)}.kpi small.up{color:var(--g)}.kpi small.dn{color:var(--r)}
+.c2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.c3{grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{text-align:left;font-size:11.5px;font-weight:650;color:var(--mute);letter-spacing:.04em;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--panel)}
+td{padding:10px 14px;border-bottom:1px solid var(--line2);white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis}
+tbody tr{cursor:pointer}tbody tr:hover{background:#f8fbff}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tb{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line)}
+.tb input,.fld input,.fld select,.fld textarea{border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:#fff;outline:0;width:100%}
+.tb input{width:210px}
+.fld input:focus,.fld select:focus,.fld textarea:focus,.tb input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-s)}
+.seg{display:inline-flex;background:var(--soft);border-radius:9px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:none;padding:4px 11px;border-radius:7px;font-size:13px;font-weight:550;color:var(--mute)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(23,38,54,.12)}
+.bar{height:7px;border-radius:99px;background:var(--soft);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.hb{display:grid;grid-template-columns:minmax(80px,34%) 1fr 34px;gap:10px;align-items:center;font-size:13px;padding:4px 0}
+.hb span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}.hb b{text-align:right;font-variant-numeric:tabular-nums}
+.lg{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--ink2)}.lg i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px}
+svg text{font-family:Inter,system-ui,sans-serif}
+
+/* home */
+.hero{border-radius:16px;padding:24px;background:linear-gradient(120deg,#f1f7fe,#f7f4fe 70%,#fef6f0);border:1px solid var(--line);display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.news{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px}
+.feat{overflow:hidden;display:flex;flex-direction:column}
+.feat .art{height:170px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:6px}
+.li{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line2)}.li:first-child{border-top:0;padding-top:0}
+.dt{flex:none;width:44px;height:46px;border-radius:10px;background:var(--soft);display:grid;place-content:center;text-align:center;line-height:1.1}
+.dt b{font-size:16px}.dt span{font-size:10px;text-transform:uppercase;color:var(--mute);font-weight:650}
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:12px}
+.mod{text-align:left;padding:16px;border:1px solid var(--line);background:#fff;border-radius:14px;display:flex;flex-direction:column;gap:9px;transition:.18s;color:var(--ink)}
+.mod:hover{transform:translateY(-2px);box-shadow:var(--sh);border-color:#d3dde9}
+.mod p{margin:0;color:var(--mute);font-size:13px;flex:1}
+.mod .ft{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);border-top:1px solid var(--line2);padding-top:9px}
+.mod.dash{border-style:dashed;border-color:#b9cbe0;background:var(--panel)}
+
+/* gantt */
+.gw{overflow:auto;max-height:600px;border-top:1px solid var(--line)}
+.gi{display:flex;width:max-content;min-width:100%}
+.gl{position:sticky;left:0;z-index:3;background:#fff;border-right:1px solid var(--line);flex:none}
+.gh{position:sticky;top:0;z-index:4;background:var(--panel);border-bottom:1px solid var(--line);height:44px;display:flex;align-items:center;font-size:11.5px;font-weight:650;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.gr{height:34px;display:flex;align-items:center;border-bottom:1px solid var(--line2);font-size:13px;cursor:pointer}
+.gr:hover{background:#f8fbff}.gr.ph0{font-weight:650;background:#fbfcfe}
+.gc{padding:0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:none}
+.gt{position:relative}
+.gt svg{display:block}
+.heat td{text-align:center;padding:6px;border:2px solid #fff;border-radius:6px;font-size:12px;font-variant-numeric:tabular-nums}
+.kb{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:12px;overflow-x:auto}
+.kc{background:var(--panel);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.kt{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:6px;cursor:pointer}
+.kt:hover{box-shadow:var(--sh)}
+.gate{display:flex;gap:3px}.gate i{height:6px;flex:1;border-radius:3px;background:var(--soft)}.gate i.on{background:var(--acc)}
+.rk{display:grid;grid-template-columns:auto repeat(5,1fr);gap:3px;font-size:11px}
+.rk div{aspect-ratio:1.5;border-radius:5px;display:grid;place-items:center;font-weight:700}
+
+/* collab */
+.mail{display:grid;grid-template-columns:minmax(240px,360px) minmax(0,1fr);min-height:520px}
+.ml{border-right:1px solid var(--line);overflow:auto;max-height:640px}
+.mrow{padding:12px 14px;border-bottom:1px solid var(--line2);cursor:pointer;display:grid;gap:2px}
+.mrow:hover{background:var(--panel)}.mrow.on{background:var(--acc-s)}.mrow.un b{font-weight:700}.mrow b{font-weight:520}
+.chat{display:grid;grid-template-columns:240px minmax(0,1fr);height:min(640px,calc(100vh - 150px))}
+.cl{border-right:1px solid var(--line);overflow:auto;padding:8px}
+.cm{display:flex;flex-direction:column;min-height:0}
+.msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;gap:9px;max-width:78%}.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.bub{background:var(--soft);border-radius:12px;padding:8px 12px}.msg.me .bub{background:var(--acc);color:#fff}
+.bub small{display:block;font-size:11px;opacity:.7}
+.send{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.send input{flex:1;border:1px solid var(--line);border-radius:9px;padding:8px 12px;outline:0;min-width:0}
+
+/* overlays */
+.ov{position:fixed;inset:0;background:rgba(23,38,54,.32);z-index:60;display:flex;justify-content:center;align-items:flex-start;padding:max(16px,5vh) 16px;overflow:auto}
+.modal{background:#fff;border-radius:16px;width:min(560px,100%);box-shadow:0 20px 60px rgba(23,38,54,.25)}
+.ov.dr{justify-content:flex-end;padding:0;align-items:stretch}
+.ov.dr .modal{border-radius:0;width:min(460px,100%);overflow:auto}
+.mh{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.mb{padding:18px;display:grid;gap:13px}
+.mf{padding:14px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+.fld{display:grid;gap:4px}.fld label{font-size:12.5px;font-weight:600;color:var(--ink2)}.fld label i{color:var(--r);font-style:normal}
+.f2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.err{color:var(--r);font-size:12px}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:13.5px}.kv span{color:var(--mute)}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;z-index:90;font-weight:550;box-shadow:var(--sh);max-width:calc(100vw - 32px)}
+.cta{position:fixed;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30;box-shadow:0 8px 24px rgba(33,150,243,.35);border-radius:99px;padding:10px 16px}
+.burger{display:none}
+@media(max-width:940px){
+  .login{grid-template-columns:1fr}.l-art{padding:24px 16px;border-right:0;border-bottom:1px solid var(--line)}.l-list{display:none}
+  .shell{grid-template-columns:1fr}
+  .side{position:fixed;z-index:50;left:0;top:0;width:280px;transform:translateX(-102%);transition:.2s;box-shadow:var(--sh)}
+  .side.open{transform:none}
+  .burger{display:grid}.news{grid-template-columns:1fr}
+  .mail{grid-template-columns:1fr}.ml{border-right:0;max-height:260px;border-bottom:1px solid var(--line)}
+  .chat{grid-template-columns:1fr;height:auto}.cl{border-right:0;border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto}.cl .lbl{display:none}.cl .ni{width:auto;white-space:nowrap}.msgs{min-height:320px;max-height:420px}
+  .srch{display:none}.crumb{flex:1}
+  .hide-m{display:none!important}
+}
+</style>
+</head><body>
+<div id="app"></div><div id="ovr"></div><div id="toast"></div>
+
+<script>
+/* ============ helpers ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const P={home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',inbox:'M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5',chat:'M4 5h16v11H9l-5 4z',docs:'M6 3h9l4 4v14H6zM15 3v4h4M9 12h7M9 16h7',
+projects:'M4 6h9M8 12h11M5 18h8M3 3v18',maintenance:'M14.5 5.5a4 4 0 0 0 4.9 4.9l-9.6 9.6a2 2 0 0 1-2.8-2.8l9.6-9.6a4 4 0 0 1-2.1-2.1z',assets:'M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8',moc:'M4 8h13l-3-3M20 16H7l3 3',
+quality:'M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6zM9 12l2 2 4-4',safety:'M4 17h16M6 17v-3a6 6 0 0 1 12 0v3M10 8V5h4v3M3 20h18',operations:'M3 12h4l3-8 4 16 3-8h4',contractors:'M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2 20c0-3.5 3-6 7-6s7 2.5 7 6M17 4.5a3.5 3.5 0 0 1 0 6.5M22 20c0-2.5-1.5-4.5-4-5.5',
+shutdowns:'M12 3v9M6.5 6.5a8 8 0 1 0 11 0',stores:'M3 9l9-6 9 6v11H3zM8 20v-7h8v7M8 16.5h8',bell:'M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21a2 2 0 0 0 4 0',plus:'M12 5v14M5 12h14',search:'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',menu:'M4 7h16M4 12h16M4 17h16',x:'M6 6l12 12M18 6L6 18',
+cv:'M9 6l6 6-6 6',mail:'M3 6h18v12H3zM3 7l9 7 9-7',phone:'M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z',gear:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19 12l2-1-1-3-2 .5-1.5-1.5.5-2-3-1-1 2h-2l-1-2-3 1 .5 2L7 8.500 5 8l-1 3 2 1v2l-2 1 1 3 2-.5 1.500 1.500-.5 2 3 1 1-2h2l1 2 3-1-.5-2 1.500-1.500 2 .5 1-3-2-1z',ext:'M14 4h6v6M20 4l-9 9M18 14v6H4V6h6',out:'M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4 3.500-7 8-7s8 3 8 7',spark:'M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z',check:'M4 4h16v16H4zM8 12l3 3 5-6'};
+const ic=(n,st='')=>`<svg class="ic" viewBox="0 0 24 24" style="${st}"><path d="${P[n]||P.docs}"/></svg>`;
+const LOGO='data:image/png;base64,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';
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dAt=o=>{const d=new Date(TODAY);d.setDate(d.getDate()+o);return d};
+const fD=(o,y=1)=>{const d=dAt(o);return d.getDate()+' '+MON[d.getMonth()]+(y?' '+String(d.getFullYear()).slice(2):'')};
+const rng=seed=>{let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
+const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
+const tone=s=>{s=String(s);if(/overdue|fail|reject|critical|alarm|expired|breakdown|out of stock|below|major|high risk|not ready|blocked|shortage|absent|lapsed|delayed/i.test(s))return'r';if(/due|progress|pending|review|open|watch|expiring|low|awaiting|observ|partial|investigat|minor|draft|hold|reported|submitted|transit|risk/i.test(s))return'a';if(/complete|closed|approved|pass|compliant|valid|active|normal|in stock|verified|issued|ready|on target|released|implemented|done|present|capitalised|effective|received|logged|on track|cleared/i.test(s))return'g';return'b'};
+const TC={g:'#35b889',a:'#e7a93c',r:'#e06a7a',b:'#5aa6ee'};
+const pill=s=>`<span class="pill t-${tone(s)}">${esc(s)}</span>`;
+const AVC=['#5b8def','#35b889','#e7a93c','#9b7fe6','#e0718f','#3bb3c9','#f08a54','#6c7f96'];
+const av=(n,sz=28)=>`<span class="av" style="width:${sz}px;height:${sz}px;background:${AVC[hash(n)%8]}">${esc(n.split(' ').map(w=>w[0]).slice(0,2).join(''))}</span>`;
+const store={get(k,d){try{const v=localStorage.getItem('cps_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('cps_'+k,JSON.stringify(v))}catch(e){}}};
+function toast(m){const t=$('#toast');t.innerHTML=`<div class="toast">${esc(m)}</div>`;clearTimeout(toast.t);toast.t=setTimeout(()=>t.innerHTML='',2600)}
+
+/* ============ reference data ============ */
+const ROLES=[
+ {id:'head',t:'Plant Head',n:'Rahul Menon',d:'Whole-plant view, approvals',home:'home'},
+ {id:'pm',t:'Project Manager',n:'Priya Nair',d:'Capex, schedules, budgets',home:'projects'},
+ {id:'mnt',t:'Maintenance Head',n:'Arjun Deshmukh',d:'PM, breakdowns, reliability',home:'maintenance'},
+ {id:'ehs',t:'EHS Manager',n:'Sneha Kulkarni',d:'Permits, incidents, compliance',home:'safety'},
+ {id:'qa',t:'Quality Head',n:'Meera Iyer',d:'Checks, NCRs, CAPA, audits',home:'quality'},
+ {id:'ops',t:'Shift In-charge',n:'Vikram Rao',d:'Production, handovers, rounds',home:'operations'},
+ {id:'str',t:'Stores Manager',n:'Imran Shaikh',d:'Requests, stock, reorders',home:'stores'},
+ {id:'con',t:'Contractor Cell Lead',n:'Kavita Joshi',d:'Onboarding, manpower, gate pass',home:'contractors'},
+ {id:'f-op',t:'Field Operator',n:'Ramesh Yadav',d:'Rounds and operating checklists',home:'home',f:1,m:'operations'},
+ {id:'f-mt',t:'Maintenance Technician',n:'Santosh Pawar',d:'Equipment checks and PM jobs',home:'home',f:1,m:'maintenance'},
+ {id:'f-sf',t:'Safety Officer',n:'Dinesh Chavan',d:'Permits and safety inspections',home:'home',f:1,m:'safety'},
+ {id:'f-qc',t:'Quality Inspector',n:'Anil Sonawane',d:'Sampling and quality checks',home:'home',f:1,m:'quality'},
+ {id:'f-st',t:'Storekeeper',n:'Ganesh More',d:'Stock counts and store checks',home:'home',f:1,m:'stores'}];
+const PLANT={chem:'Specialty Chemicals Plant',pharma:'Formulations Plant',food:'Food Processing Plant',oil:'Refinery Complex',power:'Thermal Power Station',metal:'Integrated Steel Works',textile:'Fibres & Tyres Plant',eng:'Engineering Works'};
+/* industry-specific checklists: [system, name, items] */
+const ICL={
+chem:[['operations','Reactor charging checklist',['Reactor cleaned and line clearance signed','Raw material identity and quantity verified','Jacket utilities and agitator healthy','Vent and scrubber line open','Earthing and bonding connected','Batch sheet updated with start time']],
+ ['safety','Solvent tank farm inspection',['Dyke wall intact and drain valve closed','Flame arrestors and breather valves clean','No leakage at flanges and pump seals','Earthing continuity checked','Foam system and hydrant pressure normal']],
+ ['quality','In-process sampling – distillation',['Sample point flushed before sampling','Sample labelled with batch and time','Moisture within specification','Assay within specification','Result entered and communicated to shift']]],
+pharma:[['operations','Line clearance – compression',['Previous product and labels removed','Machine and area cleaned, status label updated','Punches and dies verified against BMR','Temperature and RH within limits','Balance calibration verified','QA line clearance signed']],
+ ['quality','In-process check – tablets',['Average weight within limits','Hardness within limits','Thickness within limits','Friability within limits','Disintegration time within limits','Appearance free from defects']],
+ ['safety','Clean room gowning & hygiene audit',['Gowning procedure followed','Differential pressure within limits','No jewellery or cosmetics','Hand sanitisation done at entry','Waste segregated in correct bins']]],
+food:[['quality','CCP monitoring – metal detector',['Ferrous test piece rejected','Non-ferrous test piece rejected','Stainless steel test piece rejected','Reject bin locked and emptied','Verification recorded on CCP log']],
+ ['operations','CIP verification – processing line',['Pre-rinse completed','Caustic concentration and temperature achieved','Acid wash completed','Final rinse pH neutral','ATP swab within limit','Line released for production']],
+ ['safety','GMP & hygiene round',['Hairnets, beard covers and clean uniforms worn','Hand wash stations stocked','No glass or brittle plastic damage','Pest control stations intact','Allergen segregation followed']]],
+oil:[['safety','Hot work permit pre-check',['Gas test done, LEL at 0%','Drains and sewers covered within 15 m','Fire watch with extinguisher posted','Equipment isolated and blinded','Permit displayed and signed by issuer','Emergency communication available']],
+ ['operations','Tank farm round',['Tank level and temperature logged','Roof drain and seal condition normal','No leakage in dyke area','Water draw-off valve closed and locked','Gauging hatch closed','Foam pourers unobstructed']],
+ ['maintenance','Rotating equipment check – pump house',['Seal pot level and pressure normal','Bearing temperature within limit','Vibration normal on DE and NDE','Lube oil level adequate','Coupling guard in place','Standby pump on auto']]],
+power:[['operations','Boiler operator round',['Drum level steady in gauge glass','Furnace draft within range','Feed water pressure normal','No tube leak sound or steam leakage','Soot blowers parked','Ash handling system running']],
+ ['maintenance','Transformer daily inspection',['Oil level in conservator normal','Winding and oil temperature within limit','Silica gel colour healthy','No oil leakage at gaskets','Cooling fans and pumps working','Buchholz relay free of gas']],
+ ['safety','Switchyard safety inspection',['Earthing connections intact','Fencing and gate locked','Danger boards displayed','Insulators free from cracks','Fire extinguishers in place']]],
+metal:[['safety','EOT crane pre-use check',['Hook latch and wire rope healthy','Limit switches working','Brakes holding under load','Horn and warning lights working','Pendant or cabin controls responsive','Load chart displayed']],
+ ['operations','Furnace area round',['Cooling water flow and temperature normal','No hot spots on shell','Tap hole and runner condition good','Gas line pressure normal, no leakage','Platforms free of spillage']],
+ ['quality','Coil surface inspection',['Thickness within tolerance','Width within tolerance','No scratches, pits or roll marks','Edge condition acceptable','Coil ID tag matches heat number']]],
+textile:[['operations','Spinning line patrol',['Spin pack pressure within range','Quench air temperature and flow normal','No filament breaks or drips','Godet and winder speeds as per recipe','Doffing done on schedule']],
+ ['safety','Curing press safety check',['Safety bar and light curtain working','Steam and hot water lines free of leaks','Emergency stop tested','Platen temperature as per specification','Mould locking verified']],
+ ['quality','Denier and tenacity check',['Sample conditioned before test','Denier within specification','Tenacity within specification','Elongation within specification','Results entered against lot number']]],
+eng:[['quality','Weld visual inspection',['Joint fit-up as per drawing','WPS and welder ID verified','No cracks, porosity or undercut','Weld size and profile acceptable','Spatter removed, joint cleaned','Traceability marked on job']],
+ ['maintenance','CNC machine daily check',['Coolant level and concentration normal','Way lube level adequate','Spindle warm-up completed','Chuck pressure as per setting','Air pressure normal','Chip conveyor clear']],
+ ['safety','Paint booth inspection',['Exhaust filters clean, airflow normal','Earthing of job and equipment done','No ignition source in booth','Paint and thinner stored in closed containers','Respirators worn by painters']]]};
+function checklists(){const I=ind(),o=[
+ ['operations','Operator round – '+I.u[0],[...I.e.slice(0,4).map(e=>e+': running normal, no leak or abnormal sound'),'Field instruments reading normal','Housekeeping and walkways clear']],
+ ['maintenance','Daily equipment check – '+I.e[2],['Lubrication level adequate','No abnormal vibration or noise','Bearing temperature within limit','Guards and covers in place','No leakage at seals and flanges','Foundation bolts tight']],
+ ['maintenance','PM job checklist – '+I.e[0],['Permit and isolation (LOTO) in place','Wear parts inspected and replaced as needed','Alignment and clearances checked','Fasteners torqued','Trial run satisfactory','Area cleaned and handed over']],
+ ['safety','Area safety inspection – '+I.u[1],['PPE worn by all personnel','Fire extinguishers in place and charged','Emergency exits unobstructed','Work permits displayed at site','Safety shower and eyewash working','Housekeeping satisfactory']],
+ ['quality','Incoming material inspection',['Supplier COA received and matches PO','Packing intact, no damage or contamination','Label and lot number verified','Sample drawn as per sampling plan','Material moved to quarantine area']],
+ ['stores','Warehouse inspection – main store',['Aisles and emergency exits clear','Racks and pallets undamaged','FIFO followed and bin cards updated','Hazardous materials segregated','Fire extinguishers and hydrants accessible','Housekeeping satisfactory']],
+ ['stores','Cycle count – A class items',['Physical quantity matches system stock','Bin location and label correct','Shelf-life items within expiry','Damaged stock segregated','Variance reported to stores manager']],
+ ...ICL[I.k]];
+ return o.map(([m,n,items],i)=>({id:I.k+'-'+i,m,n,items}))}
+const PEOPLE=['Rahul Menon','Priya Nair','Arjun Deshmukh','Sneha Kulkarni','Vikram Rao','Meera Iyer','Imran Shaikh','Kavita Joshi','Suresh Patil','Ananya Gupta'];
+const CONTR=['Shreeji Engineering Works','Apex Scaffolding Co.','Varun Electricals','Konkan Fabricators','Sahyadri Insulation Services','Trident Civil Contractors'];
+const IND=[
+ {k:'chem',n:'Chemicals & Specialty Chemicals',u:['Reactor Block A','Distillation Unit','Tank Farm','Utilities','ETP'],e:['Reactor R-101','Distillation Column C-201','Centrifugal Pump P-304','Heat Exchanger E-112','Agitator AG-07','Chiller CH-02','Air Compressor K-01','Boiler B-03'],p:'Specialty amines',m:'MT',
+  c:['Aarti Industries','Alkyl Amines Chemicals Ltd.','Aquapharm Chemical Ltd.','BASF','Basell Polyolefins India Pvt. Ltd. (LyondellBasell)','Camlin Fine Sciences Ltd.','Catapharma Chemicals Pvt. Ltd.','Deepak Fertilisers And Petrochemicals Corporation Limited','Deepak Nitrite Ltd.','DRT-Anthea Aroma Chemicals Pvt. Ltd.','Finotex Chemical Ltd.','Lubrizol India Private Limited','Novonesis','Performance Chemiserve Ltd.','Pidilite Industries','Suparna Chemicals Ltd.','Insecticides (India) Ltd.']},
+ {k:'pharma',n:'Pharma & Healthcare',u:['Granulation Suite','Compression Hall','Sterile Filling','QC Laboratory','Utilities'],e:['Fluid Bed Dryer FBD-02','Tablet Press TP-05','Autoclave AC-01','AHU-12 (Grade C)','Purified Water Skid PW-01','Blister Line BL-03','Coating Pan CP-02','Lyophiliser LY-01'],p:'Oral solid dosage',m:'batches',
+  c:['Amneal Pharmaceutical Pvt. Ltd.','Bharat Serums and Vaccines Ltd.','Bliss GVS Pharmaceuticals Pvt. Ltd.','Cipla Ltd.','D K Pharmachem Pvt. Ltd.','Glenmark Pharmaceuticals Ltd.','Piramal Pharma Limited']},
+ {k:'food',n:'Food & Consumer Products',u:['Refinery','Processing Line 1','Packing Hall','Cold Store','Utilities'],e:['Deodoriser DO-01','Plate Heat Exchanger PHE-04','Form-Fill-Seal FFS-06','Spiral Freezer SF-02','Ammonia Compressor AC-03','Homogeniser HG-01','Palletiser PL-02','Boiler B-02'],p:'Packaged foods',m:'MT',
+  c:['Deoleo India Pvt. Ltd.','General Mills (General Mills India Pvt. Ltd.)','Patanjali Foods Ltd.','Vista Processed Foods Pvt Ltd (Corporate Head Office and Taloja Plant)']},
+ {k:'oil',n:'Oil, Gas, Fuels & Energy',u:['Crude Distillation Unit','Hydrotreater','Tank Farm','Pipeline Station','Flare & Utilities'],e:['Crude Charge Pump P-1101','Fired Heater H-201','Recycle Gas Compressor K-301','Air Fin Cooler AC-405','Storage Tank TK-12','Control Valve FV-2207','Gas Turbine GT-02','Flare KO Drum V-901'],p:'Refined products',m:'KL',
+  c:['EET Fuels','Essar Oil (UK) Ltd.','Larsen & Toubro Energy Hydrocarbon Ltd.','Nayara Energy Limited','ONGC','Reliance BP Mobility Ltd.','Reliance Ethane Pipeline Ltd. (REPL)','Reliance Industries Ltd.']},
+ {k:'power',n:'Power & Utilities',u:['Boiler House','Turbine Hall','Switchyard','Coal Handling Plant','Water Treatment'],e:['Boiler Feed Pump BFP-2A','ID Fan 1B','Steam Turbine TG-1','Generator Transformer GT-1','Coal Mill CM-3','Condenser CW Pump 2','ESP Field 4','33 kV Feeder F-07'],p:'Power generation',m:'MU',
+  c:['Adani Electricity Mumbai Limited','Bloomenergy','Lalitpur Power Generation Company Limited']},
+ {k:'metal',n:'Metals & Steel',u:['Blast Furnace','Steel Melt Shop','Hot Strip Mill','Cold Rolling Mill','Utilities'],e:['Hot Blast Stove HBS-2','Ladle Crane LC-04','Roughing Mill Stand R2','Down Coiler DC-1','Pickling Line PL-1','Hydraulic Power Pack HPP-07','Oxygen Lance OL-3','Reheating Furnace RF-2'],p:'Flat steel',m:'MT',
+  c:['Hindalco Industries Limited','JSW Steel Ltd','Tata Steel Ltd. (incl. Tata Steel Meramandali)']},
+ {k:'textile',n:'Textiles, Fibres & Tyres',u:['Polymerisation','Spinning','Twisting & Weaving','Curing Hall','Utilities'],e:['Extruder EX-03','Spinning Machine SP-12','Draw Twister DT-07','Curing Press CP-21','Banbury Mixer BM-02','Chiller CH-04','Air Compressor K-02','Thermic Fluid Heater TFH-1'],p:'Technical fibres',m:'MT',
+  c:['Century Enka Ltd. (Aditya Birla Group)','Garware Technical Fibres Ltd.','Reise Mitas Tires LLP']},
+ {k:'eng',n:'Conglomerates, Engineering & Others',u:['Fabrication Shop','Machine Shop','Assembly Line','Paint Shop','Utilities'],e:['CNC Machining Centre VMC-08','Plate Bending Machine PB-02','EOT Crane 25T','Welding Robot WR-05','Paint Booth PB-1','Air Compressor K-03','DG Set 1250 kVA','Hydraulic Press HP-04'],p:'Engineered equipment',m:'units',
+  c:['Godrej and Boyce Manufacturing Company Limited','Godrej Enterprises Group','Godrej Industries Limited','L&T','Horizon Industrial Parks Ltd.','Sahara Group']}];
+
+/* ============ module + page definitions ============ */
+const MODS=[
+ {id:'projects',n:'Projects',full:'Project Management',c:'#2196f3',tg:'Plan, schedule and deliver every capex and plant project on one timeline.'},
+ {id:'maintenance',n:'Maintenance',full:'Plant Maintenance',c:'#0e9f8e',tg:'Preventive and predictive maintenance, from schedule to root cause.'},
+ {id:'assets',n:'Assets',full:'Asset Management',c:'#5b6ee1',tg:'One register for every asset, tag, calibration and warranty.'},
+ {id:'moc',n:'Management of Change',full:'Management of Change',c:'#8b5cf6',tg:'Every process, equipment and procedure change, reviewed and traceable.'},
+ {id:'quality',n:'Quality (QMS)',full:'Quality Management',c:'#2f9e6b',tg:'Checks, deviations, CAPA and audits in a closed loop.'},
+ {id:'safety',n:'Safety & EHS',full:'Safety & EHS',c:'#e8833a',tg:'Observations, permits, incidents and statutory compliance.'},
+ {id:'operations',n:'Operations',full:'Plant Operations',c:'#0ea5c6',tg:'Production, shift handovers, rounds and downtime, shift by shift.'},
+ {id:'contractors',n:'Contractors & Workforce',full:'Contractor & Workforce',c:'#d9628a',tg:'Onboard, deploy and score every contractor on site.'},
+ {id:'shutdowns',n:'Shutdowns & Turnarounds',full:'Shutdowns & Turnarounds',c:'#c98a14',tg:'Readiness to closeout for every planned shutdown.'},
+ {id:'stores',n:'Stores & Inventory',full:'Stores & Inventory',c:'#5f7a94',tg:'Material requests, stock counts and reorder alerts.'}];
+const PG={},ORDER={};
+function pg(m,id,n,d,pre,cnt,cols,x){PG[id]={m,id,n,d,pre,cnt,cols,x};(ORDER[m]=ORDER[m]||[]).push(id)}
+// custom project pages
+pg('projects','pj-plan','Planning & Scheduling','Gantt schedule with baselines, dependencies, critical path and resource load.');
+pg('projects','pj-tasks','Tasks & Milestones','Assign work, move it across the board and track every milestone.');
+pg('projects','pj-budget','Budget & Cost','Budget, commitments, actuals and forecast by project and cost head.');
+pg('projects','pj-capex','Capex Tracking','Capex proposals through stage gates, from idea to capitalisation.');
+pg('projects','pj-dash','Dashboards','Portfolio health, schedule and cost performance, risks and milestones.');
+const E=['Equipment','e'],O=['Owner','p'],U=['Unit','u'];
+// Maintenance
+pg('maintenance','mt-pm','PM Schedules','Calendar and meter based preventive maintenance plans.','PM',16,[['Task','t',['Lube oil change','Coupling alignment check','Bearing greasing','Filter replacement','Belt tension check','Safety valve testing','Motor insulation test','Gearbox oil sampling']],E,['Frequency','o',['Weekly','Monthly','Quarterly','Half-yearly']],['Next due','d',[-6,40]],O,['Status','s',['Scheduled','Due this week','Overdue','Completed']]]);
+pg('maintenance','mt-wo','Work Orders','Raise, assign and close maintenance work orders.','WO',18,[['Description','t',['Replace mechanical seal','Rectify abnormal vibration','Attend steam leak at flange','Calibrate pressure transmitter','Replace worn V-belts','Overhaul gearbox','Fix conveyor tracking','Service air dryer']],E,['Type','o',['Preventive','Corrective','Breakdown','Inspection']],['Priority','o',['High','Medium','Low']],['Assigned to','p'],['Due','d',[-4,14]],['Status','s',['Open','In progress','Awaiting spares','Completed']]]);
+pg('maintenance','mt-pred','Predictive Monitoring','Vibration, thermography and oil analysis readings against limits.','CM',14,[E,['Technique','o',['Vibration','Thermography','Oil analysis','Ultrasound']],['Reading','n',[1.2,9.8,'',1]],['Alarm limit','n',[7,8,'',1]],['Trend','o',['Stable','Rising','Falling']],['Measured','d',[-12,0]],['Condition','s',['Normal','Normal','Watch','Alarm']]],'pred');
+pg('maintenance','mt-bd','Breakdowns & RCA','Breakdown reports with root cause analysis and actions.','BD',12,[['Failure','t',['Bearing seizure','Mechanical seal leak','Motor winding burnt','VFD trip on overcurrent','Coupling failure','Gearbox overheating','Instrument air failure']],E,['Downtime (h)','n',[0.5,14,'',1]],['Root cause','o',['Lubrication','Misalignment','Electrical fault','Operating error','Wear & tear']],['RCA method','o',['5-Why','Fishbone','FMEA']],['Reported','d',[-40,0]],['Status','s',['Reported','RCA in progress','Action pending','Closed']]]);
+pg('maintenance','mt-insp','Inspections','Equipment inspection checklists and scores.','IN',14,[['Checklist','t',['Rotating equipment daily check','Pressure vessel external inspection','Electrical panel thermography round','Lifting tools & tackles check','Fire pump weekly run test','Compressor house round']],E,['Inspector','p'],['Score (%)','n',[62,100,'',0]],['Date','d',[-20,0]],['Result','s',['Pass','Pass','Observations','Fail']]]);
+pg('maintenance','mt-spares','Spares & Consumables','Critical spares and consumables with min levels.','SP',16,[['Item','t',['Mechanical seal 45 mm','Deep groove bearing 6312','V-belt SPB 2500','Gasket spiral wound 4"','Lube oil ISO VG 68 (210 L)','Pressure gauge 0–16 bar','Contactor 3P 95 A','Filter element 10 µ']],['Stock','n',[0,60,'',0]],['Min level','n',[4,20,'',0]],['Location','o',['Main Store A-12','Main Store B-04','Sub-store Utilities','Sub-store Workshop']],['Last issue','d',[-30,0]],['Status','s',['In stock','In stock','Low stock','Out of stock','On order']]]);
+pg('maintenance','mt-hist','Equipment History','Every job, part and cost logged against the equipment.','EH',16,[['Event','t',['Overhaul completed','Bearing replaced','Seal replaced','Alignment corrected','Motor rewound','Annual inspection','Impeller trimmed']],E,['Work type','o',['Preventive','Corrective','Breakdown','Overhaul']],['Cost (₹ L)','n',[0.2,8.5,'',1]],['Date','d',[-300,-2]],['Done by','p'],['Status','s',['Logged','Verified']]]);
+pg('maintenance','mt-kpi','Maintenance KPIs','MTBF, MTTR and availability by equipment.','KP',8,[E,['MTBF (h)','n',[180,960,'',0]],['MTTR (h)','n',[1.2,7.5,'',1]],['Availability (%)','n',[91,99.6,'',1]],['Breakdowns (YTD)','n',[0,9,'',0]],['Status','s',['On target','On target','Below target']]],'kpi');
+// Assets
+pg('assets','as-reg','Asset Register','Plant → unit → equipment hierarchy with key attributes.','AST',18,[['Asset','e'],U,['Class','o',['Rotating','Static','Electrical','Instrument','Utility']],['Criticality','o',['A – Critical','B – Essential','C – General']],['Installed','d',[-4200,-200]],['Value (₹ L)','n',[4,420,'',0]],['Status','s',['Active','Active','Active','Under maintenance','Standby']]]);
+pg('assets','as-qr','QR / Barcode Tags','Tag printing and scan history for each asset.','TAG',14,[['Asset','e'],['Tag ID','t',['QR-10482','QR-10483','QR-10491','QR-10502','QR-10517','QR-10533','QR-10540','QR-10558']],U,['Last scanned','d',[-45,0]],['Scanned by','p'],['Status','s',['Tagged','Tagged','Reprint pending','Not tagged']]]);
+pg('assets','as-cal','Calibration','Instrument calibration schedule and certificates.','CAL',16,[['Instrument','t',['Pressure transmitter PT-1101','Temperature RTD TE-204','Flow meter FT-312','Weighing scale WS-05','pH analyser AT-07','Level transmitter LT-118','Safety valve PSV-22','Torque wrench TW-03']],U,['Range','t',['0–25 bar','0–300 °C','0–120 m³/h','0–500 kg','2–12 pH','0–6 m','Set 14.5 bar','40–200 Nm']],['Agency','o',['In-house lab','NABL lab','OEM']],['Due date','d',[-10,120]],['Status','s',['Valid','Valid','Due this month','Overdue']]]);
+pg('assets','as-life','Lifecycle & Depreciation','Book value, depreciation and remaining life.','LC',12,[['Asset','e'],['Capitalised','d',[-4000,-300]],['Cost (₹ L)','n',[20,480,'',0]],['Book value (₹ L)','n',[2,300,'',0]],['Method','o',['SLM','WDV']],['Remaining life (yr)','n',[0,18,'',0]],['Stage','s',['Active','Active','Review for replacement','Planned for disposal']]]);
+pg('assets','as-war','Warranty & AMC','Warranty and AMC contracts with expiry alerts.','AMC',12,[['Asset','e'],['Contract','o',['OEM warranty','Comprehensive AMC','Non-comprehensive AMC']],['Vendor','c'],['Value (₹ L)','n',[0.8,24,'',1]],['Expires','d',[-15,300]],['Status','s',['Active','Active','Expiring in 60 days','Expired']]]);
+pg('assets','as-aud','Asset Audits','Physical verification rounds and discrepancies.','AUD',10,[['Audit','t',['Annual physical verification','Quarterly spot check','Insurance verification','Statutory auditor walk-through']],U,['Assets checked','n',[40,320,'',0]],['Discrepancies','n',[0,9,'',0]],['Auditor','p'],['Date','d',[-90,20]],['Status','s',['Planned','In progress','Completed','Discrepancies open']]]);
+// MoC
+const CH=['Change','t',['Replace PRV with higher capacity model','Change catalyst supplier','Revise SOP for start-up sequence','Add bypass line across control valve','Increase batch size by 10%','Relocate DG exhaust stack','Modify interlock set point','Temporary hose connection for unloading']];
+pg('moc','mc-req','Change Requests','Initiate process, equipment, procedure and personnel changes.','MOC',16,[CH,['Type','o',['Process','Equipment','Procedure','Personnel']],U,['Category','o',['Permanent','Temporary','Emergency']],['Initiator','p'],['Raised','d',[-60,0]],['Status','s',['Draft','Submitted','Under review','Approved','Rejected']]]);
+pg('moc','mc-risk','Risk & Impact Review','Risk assessment and impact review for each change.','RSK',12,[CH,['Method','o',['HAZOP','What-if','JSA','LOPA']],['Risk before','o',['High','Medium','Low']],['Risk after','o',['Medium','Low','Low']],['Reviewer','p'],['Review date','d',[-30,12]],['Status','s',['Pending review','In review','Cleared','High risk – escalated']]]);
+pg('moc','mc-app','Approvals','Multi-level approval workflow with pending approvers.','APR',12,[CH,['Level','o',['L1 – Section Head','L2 – EHS','L3 – Technical Services','L4 – Plant Head']],['Approver','p'],['Pending since (d)','n',[0,12,'',0]],['Due','d',[-3,8]],['Status','s',['Pending approval','Pending approval','Approved','Rejected','Overdue']]]);
+pg('moc','mc-impl','Implementation & PSSR','Track implementation actions and pre-startup safety review.','IMP',12,[CH,['Actions done','t',['4 of 6','7 of 7','2 of 5','5 of 8','3 of 3','1 of 4']],['PSSR','o',['Not started','Scheduled','Completed']],['Owner','p'],['Target','d',[-5,45]],['Status','s',['In progress','In progress','PSSR pending','Implemented','Delayed']]]);
+pg('moc','mc-doc','Document Updates','P&ID, SOP and drawing revisions linked to changes.','DOC',14,[['Document','t',['P&ID 101-PID-004','SOP-OPS-027 Start-up procedure','Cause & effect matrix C&E-12','Hazardous area classification drawing','Equipment data sheet DS-P304','Operating manual – Unit 2','Single line diagram SLD-03']],['Type','o',['P&ID','SOP','Drawing','Data sheet']],['Rev','t',['Rev 3 → 4','Rev 1 → 2','Rev 5 → 6','Rev 2 → 3']],['Owner','p'],['Due','d',[-6,30]],['Status','s',['Pending update','In review','Released','Overdue']]]);
+pg('moc','mc-close','Closeout & Audit Trail','Closed changes with full approval history.','CLO',12,[CH,['Closed by','p'],['Training done','o',['Yes','Yes','Partial']],['Docs updated','o',['Yes','Yes','Pending']],['Closed on','d',[-200,-2]],['Status','s',['Closed','Closed','Closed','Closeout pending']]]);
+// Quality
+pg('quality','qm-chk','Quality Checks','Incoming, in-process and final inspection results.','QC',18,[['Check','t',['Incoming raw material sampling','In-process moisture check','Final product assay','Packaging integrity test','Dimensional inspection','Viscosity check','Appearance & colour check']],['Stage','o',['Incoming','In-process','Final']],['Lot / Batch','t',['B-24117','B-24118','B-24121','L-88204','L-88207','B-24125']],['Inspector','p'],['Date','d',[-10,0]],['Result','s',['Pass','Pass','Pass','Hold','Fail']]]);
+pg('quality','qm-ncr','Deviations & NCRs','Deviation and non-conformance reports with disposition.','NCR',14,[['Non-conformance','t',['Assay below specification','Wrong label applied on drums','Moisture above limit','Foreign particle found','Dimension out of tolerance','Temperature excursion during hold','Weight variation in packs']],['Source','o',['In-process','Customer','Supplier','Internal audit']],['Severity','o',['Critical','Major','Minor']],['Disposition','o',['Rework','Reject','Use as is','Under evaluation']],['Raised by','p'],['Raised','d',[-45,0]],['Status','s',['Open','Under investigation','CAPA raised','Closed']]]);
+pg('quality','qm-capa','CAPA','Corrective and preventive actions with effectiveness checks.','CAPA',14,[['Action','t',['Revise sampling plan','Retrain operators on line clearance','Install inline moisture sensor','Add poka-yoke for label verification','Update supplier specification','Introduce second-person check','Recalibrate checkweigher']],['Type','o',['Corrective','Preventive']],['Linked to','t',['NCR-0012','NCR-0009','AUD-0004','NCR-0014','CMP-0003']],O,['Target','d',[-8,40]],['Status','s',['Open','In progress','Effectiveness check','Closed','Overdue']]]);
+pg('quality','qm-aud','Audits','Internal, customer and regulatory audit programme.','QA',12,[['Audit','t',['ISO 9001 surveillance audit','Customer audit – packaging line','Internal audit – stores','Regulatory inspection readiness','Supplier audit – packaging vendor','Internal audit – production']],['Type','o',['Internal','Customer','Regulatory','Supplier']],['Auditor','p'],['Findings','n',[0,11,'',0]],['Date','d',[-60,45]],['Status','s',['Planned','In progress','Report issued','Closed']]]);
+pg('quality','qm-doc','Document Control','Controlled SOPs, specifications and formats.','SOP',16,[['Document','t',['SOP-QA-014 Line clearance','SOP-PRD-031 Batch charging','SPEC-RM-102 Raw material spec','WI-PKG-009 Drum filling','SOP-QC-022 Sampling','FMT-QA-005 Deviation form','SOP-ENG-018 Calibration']],['Type','o',['SOP','Specification','Work instruction','Format']],['Version','t',['v3.0','v2.1','v5.0','v1.2','v4.0']],O,['Review due','d',[-12,300]],['Status','s',['Effective','Effective','In review','Draft','Review overdue']]]);
+pg('quality','qm-cmp','Complaints & Supplier Quality','Customer complaints and supplier performance.','CMP',14,[['Issue','t',['Leaking drum received','Off-spec colour reported','Short quantity in consignment','COA mismatch','Late delivery – packaging film','Supplier lot rejected at incoming','Damaged pallets']],['Party type','o',['Customer','Supplier']],['Party','t',['Western Coatings Pvt. Ltd.','Northfield Agro','Zenith Polymers','Kaveri Packaging','Orbit Chemtrade','Meridian Foods']],['Severity','o',['Critical','Major','Minor']],['Received','d',[-50,0]],['Status','s',['Open','Under investigation','Response sent','Closed']]]);
+// Safety
+pg('safety','sf-obs','Observations & Near Misses','Unsafe acts, unsafe conditions and near-miss reports.','OBS',18,[['Observation','t',['Oil spill near pump bay','Worker without safety harness on platform','Damaged cable insulation','Scaffold tag missing','Near miss – forklift and pedestrian','Blocked emergency exit','Gas cylinder not chained','Missing machine guard']],['Category','o',['Unsafe act','Unsafe condition','Near miss']],U,['Reported by','p'],['Date','d',[-20,0]],['Status','s',['Open','Action assigned','Closed','Closed']]]);
+pg('safety','sf-inc','Incident Investigation','Incident reports, investigation and corrective actions.','INC',10,[['Incident','t',['First aid – hand cut during maintenance','Minor fire in cable tray','Chemical splash on forearm','Slip and fall on wet floor','Property damage – forklift hit rack','Steam burn – first aid']],['Class','o',['First aid','Medical treatment','Fire','Property damage','LTI']],U,['Investigator','p'],['Occurred','d',[-120,-1]],['Status','s',['Reported','Under investigation','Actions pending','Closed']]]);
+pg('safety','sf-ptw','Work Permits','Hot work, confined space, height and LOTO permits.','PTW',18,[['Job','t',['Welding on pipe rack','Vessel entry for cleaning','Roof sheet replacement','Motor isolation for overhaul','Grinding near tank farm','Excavation for cable trench','Scaffold erection at column']],['Permit type','o',['Hot work','Confined space','Work at height','Electrical isolation / LOTO','Excavation']],U,['Contractor','c'],['Valid till','d',[-1,3]],['Issuer','p'],['Status','s',['Pending approval','Active','Active','Closed','Expired']]]);
+pg('safety','sf-insp','Safety Inspections','Planned inspections and compliance checklists.','SI',14,[['Inspection','t',['Fire extinguisher monthly check','Emergency shower & eyewash test','Housekeeping audit','Electrical safety walk-down','Chemical storage inspection','Lifting equipment inspection','Scaffold inspection']],U,['Inspector','p'],['Score (%)','n',[58,100,'',0]],['Date','d',[-25,6]],['Status','s',['Scheduled','Completed','Completed','Observations open','Overdue']]]);
+pg('safety','sf-env','Environment Monitoring','Emissions, effluent and waste against consent limits.','ENV',16,[['Parameter','t',['Stack SO₂','Stack NOx','Particulate matter','Effluent COD','Effluent pH','Ambient PM10','Hazardous waste stored','Noise at boundary']],['Source','o',['Boiler stack','ETP outlet','Ambient station 2','Waste yard']],['Value','n',[12,240,'',0]],['Consent limit','n',[100,250,'',0]],['Sampled','d',[-14,0]],['Status','s',['Compliant','Compliant','Compliant','Watch','Exceeded – critical']]],'env');
+pg('safety','sf-ppe','PPE & Training','PPE issue, safety training and mock drills.','TRN',14,[['Programme','t',['Work at height training','Confined space entry training','Fire fighting practical','First aid & CPR','Mock drill – toxic gas release','PPE issue – quarterly','Chemical handling awareness','LOTO refresher']],['Type','o',['Training','Mock drill','PPE issue']],['Participants','n',[8,120,'',0]],['Trainer','p'],['Date','d',[-40,30]],['Status','s',['Scheduled','Completed','Completed','Overdue']]]);
+pg('safety','sf-stat','Statutory Compliance','Licences, consents and statutory returns with renewals.','LIC',14,[['Licence / Return','t',['Factory licence','Consent to operate (Air & Water)','PESO licence – petroleum storage','Boiler certificate','Hazardous waste authorisation','Fire NOC','Form 4 annual return','Pressure vessel test certificates']],['Authority','o',['DISH','SPCB','PESO','Boiler Inspectorate','Fire Dept.']],O,['Valid till','d',[-10,500]],['Status','s',['Valid','Valid','Valid','Renewal due','Expired']]]);
+// Operations
+pg('operations','op-prod','Production Reports','Daily production against plan by unit and shift.','DPR',18,[U,['Shift','o',['A','B','C']],['Plan','n',[80,140,'',0]],['Actual','n',[62,146,'',0]],['Yield (%)','n',[91,99.4,'',1]],['Date','d',[-6,0]],['Reported by','p'],['Status','s',['Submitted','Verified','Verified','Below plan']]],'prod');
+pg('operations','op-shift','Shift Handovers','Shift logbook with open points carried forward.','SH',14,[['Handover note','t',['P-304 running on standby, seal leak under watch','Batch 24121 at hold stage, QC sample sent','Steam pressure fluctuating, boiler team informed','Cooling tower fan 2 isolated for maintenance','Tank TK-12 level at 82%, transfer planned','No abnormality, all parameters normal']],U,['Shift','o',['A → B','B → C','C → A']],['From','p'],['Open points','n',[0,5,'',0]],['Date','d',[-5,0]],['Status','s',['Acknowledged','Acknowledged','Pending acknowledgement']]]);
+pg('operations','op-round','Rounds & Checklists','Operator rounds and operational checklists.','RND',16,[['Round','t',['Field operator round – 2 hourly','Start-up checklist','Tanker unloading checklist','Utility area round','Control room parameter log','Pre-shutdown checklist']],U,['Operator','p'],['Points checked','n',[18,64,'',0]],['Abnormalities','n',[0,4,'',0]],['Date','d',[-3,0]],['Status','s',['Completed','Completed','In progress','Missed – overdue']]]);
+pg('operations','op-down','Downtime Tracking','Downtime events with reasons and duration.','DT',16,[E,['Reason','o',['Mechanical failure','Electrical failure','Material shortage','Changeover','Utility failure','Planned maintenance']],['Duration (h)','n',[0.3,9,'',1]],U,['Shift','o',['A','B','C']],['Date','d',[-14,0]],['Status','s',['Open','Restored','Restored','RCA pending']]],'down');
+pg('operations','op-batch','Batch Records','Batch and process records with review status.','BR',14,[['Batch','t',['B-24117','B-24118','B-24119','B-24120','B-24121','B-24122','B-24123']],U,['Quantity','n',[4,28,'',1]],['Cycle time (h)','n',[6,22,'',1]],['Supervisor','p'],['Completed','d',[-9,0]],['Status','s',['In progress','QA review','Released','Released','On hold']]]);
+// Contractors
+pg('contractors','cw-onb','Contractor Onboarding','Prequalification and onboarding of contractor firms.','CON',10,[['Contractor','c'],['Scope','o',['Mechanical','Electrical','Civil','Scaffolding','Insulation']],['Safety score','n',[58,96,'',0]],['Documents','t',['9 of 9','7 of 9','8 of 9','5 of 9','9 of 9']],['Coordinator','p'],['Applied','d',[-80,0]],['Status','s',['Prequalification pending','Documents under review','Approved','Approved','Rejected']]]);
+pg('contractors','cw-man','Manpower Deployment','Daily contractor manpower by unit and trade.','MP',16,[['Contractor','c'],U,['Trade','o',['Fitter','Welder','Rigger','Electrician','Helper','Scaffolder']],['Planned','n',[6,40,'',0]],['Deployed','n',[4,40,'',0]],['Date','d',[-2,0]],['Status','s',['Deployed','Deployed','Shortage','Partially deployed']]]);
+pg('contractors','cw-att','Attendance & Documents','Worker attendance, ID, medical and training validity.','WK',18,[['Worker','t',['Ramesh Yadav','Santosh Pawar','Mohd. Irfan','Dinesh Chavan','Prakash Bhoir','Ganesh More','Anil Sonawane','Sunil Gaikwad']],['Contractor','c'],['Trade','o',['Fitter','Welder','Rigger','Electrician','Helper']],['Medical valid till','d',[-20,300]],['Training valid till','d',[-10,250]],['Today','s',['Present','Present','Present','Absent','Document expiring']]]);
+pg('contractors','cw-gate','Gate Pass & Induction','Gate passes issued after safety induction.','GP',16,[['Worker','t',['Ramesh Yadav','Santosh Pawar','Mohd. Irfan','Dinesh Chavan','Prakash Bhoir','Ganesh More','Anil Sonawane']],['Contractor','c'],['Pass type','o',['Daily','Monthly','Project duration']],['Induction','o',['Completed','Completed','Scheduled']],['Valid till','d',[-3,90]],['Status','s',['Issued','Issued','Induction pending','Expired']]]);
+pg('contractors','cw-score','Contractor Scorecards','Performance and safety scores by contractor.','SC',6,[['Contractor','c'],['Safety (%)','n',[62,97,'',0]],['Quality (%)','n',[70,96,'',0]],['Schedule (%)','n',[60,98,'',0]],['Violations','n',[0,6,'',0]],['Rated on','d',[-30,-1]],['Rating','s',['On target','On target','Watch','Below target']]]);
+// Shutdowns
+pg('shutdowns','sd-ready','Readiness Tracker','Readiness of scope, materials, permits and resources.','RD',14,[['Readiness item','t',['Scope freeze signed off','Long-lead spares received','Scaffolding plan approved','Blind list prepared','Contractor mobilisation plan','Crane & lifting plan','Confined space rescue plan','Work pack review']],['Area','o',['Scope','Materials','Safety','Resources','Planning']],O,['Completion (%)','n',[20,100,'',0]],['Target','d',[-8,40]],['Status','s',['Ready','Ready','In progress','Not ready','At risk']]]);
+pg('shutdowns','sd-job','Job Cards','Shutdown job cards with progress and hold points.','JC',18,[['Job','t',['Column internals inspection','Heat exchanger bundle pulling','Safety valve servicing','Catalyst replacement','Pump overhaul','Tank internal inspection','Control valve servicing','Refractory repair']],E,['Contractor','c'],['Planned (h)','n',[8,96,'',0]],['Progress (%)','n',[0,100,'',0]],['Supervisor','p'],['Status','s',['Planned','In progress','In progress','Completed','On hold']]]);
+pg('shutdowns','sd-mat','Material Verification','Shutdown material availability and verification.','MV',16,[['Material','t',['Spiral wound gaskets set','Exchanger tube bundle','Structured packing','Stud bolts B7 M24','Catalyst – 4.2 MT','Refractory castable','Valve trim kits','Bearing set – pump P-304']],['Required','n',[4,400,'',0]],['Received','n',[0,400,'',0]],['PO','t',['PO-45-1182','PO-45-1190','PO-45-1203','PO-45-1217','PO-45-1221']],['ETA','d',[-12,30]],['Status','s',['Verified','Verified','Partially received','In transit','Shortage']]]);
+pg('shutdowns','sd-prog','Daily Progress','Daily shutdown progress against plan.','DP',14,[['Day','t',['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Day 7','Day 8','Day 9','Day 10','Day 11','Day 12','Day 13','Day 14']],['Planned (%)','n',[5,100,'',0]],['Actual (%)','n',[4,98,'',0]],['Manpower','n',[180,420,'',0]],['Safety incidents','n',[0,1,'',0]],['Reported by','p'],['Status','s',['On track','On track','Delayed','On track']]]);
+pg('shutdowns','sd-close','Closeout & Punch List','Punch points, closeout and lessons learned.','PL',16,[['Punch point','t',['Insulation pending on steam line','Paint touch-up at column platform','Missing name plate on valve','Scaffold removal pending','Instrument tubing support loose','As-built drawing update','Housekeeping at exchanger bay','Lessons learned workshop']],['Category','o',['A – Before start-up','B – After start-up','C – Documentation']],U,O,['Target','d',[-5,25]],['Status','s',['Open','In progress','Closed','Closed','Overdue']]]);
+// Stores
+pg('stores','st-req','Material Requests','Material requests, issues and returns.','MR',18,[['Item','t',['Mechanical seal 45 mm','Welding electrodes E7018','Safety helmets','Gasket sheet 3 mm','Hydraulic oil VG 46','Cable 4C × 16 sq mm','Bearing 6312','PVC gloves']],['Qty','n',[1,120,'',0]],['Type','o',['Issue','Issue','Return']],['Requested by','p'],['Department','o',['Maintenance','Production','Projects','EHS']],['Date','d',[-8,0]],['Status','s',['Requested','Approved','Issued','Issued','Rejected']]]);
+pg('stores','st-ver','Stock Verification','Cycle counts and variance against book stock.','CC',14,[['Count','t',['Cycle count – A class','Cycle count – B class','Cycle count – C class','Annual wall-to-wall count','Spot check – consumables']],['Location','o',['Main Store A','Main Store B','Sub-store Utilities','Chemical Store']],['Items counted','n',[40,620,'',0]],['Variance items','n',[0,14,'',0]],['Counted by','p'],['Date','d',[-40,10]],['Status','s',['Planned','In progress','Completed','Variance open']]]);
+pg('stores','st-reo','Reorder Alerts','Items at or below reorder level.','RO',14,[['Item','t',['Deep groove bearing 6312','V-belt SPB 2500','Lube oil ISO VG 68','Filter element 10 µ','Nitrile gloves','Gasket spiral wound 4"','Caustic lye 48%','Welding electrodes E7018']],['Stock','n',[0,18,'',0]],['Reorder level','n',[10,30,'',0]],['Lead time (d)','n',[3,45,'',0]],['Buyer','p'],['Raised','d',[-10,0]],['Status','s',['Below reorder level','PR raised','PO placed','In transit','Out of stock']]]);
+pg('stores','st-wh','Warehouse Inspections','Warehouse safety, storage and housekeeping checks.','WH',12,[['Inspection','t',['Chemical segregation check','Rack & pallet condition','Fire system & extinguishers','FIFO compliance check','Housekeeping & aisle marking','Hazardous material storage']],['Location','o',['Main Store A','Main Store B','Chemical Store','Scrap Yard']],['Inspector','p'],['Score (%)','n',[60,100,'',0]],['Date','d',[-30,5]],['Status','s',['Scheduled','Completed','Completed','Observations open']]]);
+// Workspace
+pg('collab','documents','Documents','Shared library of SOPs, drawings, reports and templates.','DOC',16,[['File','t',['Turnaround 2027 – scope freeze.xlsx','Plant emergency response plan.pdf','Monthly MIS – October.pptx','P&ID master set – Unit 2.pdf','Contractor safety manual.pdf','Capex AFE template.docx','Energy audit report.pdf','Shift roster – November.xlsx']],['Library','o',['Projects','Safety & EHS','Management reports','Engineering','Templates']],['Owner','p'],['Size (MB)','n',[0.2,18,'',1]],['Modified','d',[-30,0]],['Status','s',['Published','Published','Draft','In review']]]);
+
+/* ============ state ============ */
+let S=store.get('s',{role:null,ind:null,co:null});
+let L={step:1,role:S.role,ind:S.ind||'chem',co:S.co};
+let DATA={},ADDED=store.get('added',{}),LEADS=store.get('leads',[]),CONN=store.get('conn2',{wp:'POC862699',key:'poc862699c06325953e214f839b06a07b8dc4859a',email:'anirudh@clappia.com',apps:{}});
+let UI={page:'home',q:'',f:'All',open:null,proj:'P1',zoom:'month',base:true,crit:false,dep:true,col:{},tview:'board',mail:0,chat:'plant-leadership'};
+let PROJ=[],NOTIF=[],MAILS=[],CHATS={};
+let SUBS=store.get('subs',[]),SEEN=store.get('seen',{});
+function seedSubs(){const I=ind(),r=rng(hash('sub'+I.k)),cl=checklists(),F=ROLES.filter(x=>x.f);
+  return Array.from({length:7},(_,i)=>{const c=cl[(i*3+1)%cl.length],who=F.find(x=>x.m===c.m)||F[0];
+    const res=c.items.map(q=>{const a=r()<.84?'OK':r()<.75?'Not OK':'N/A';return{q,a,r:a==='Not OK'?'Needs attention, informed shift in-charge':''}});
+    return mkSub(c,who.n,who.t,I.u[Math.floor(r()*I.u.length)],res,Date.now()-(i+1)*(2.4+r()*3)*36e5,'seed'+i,1)})}
+function mkSub(c,by,role,unit,res,at,id,seed){const ok=res.filter(x=>x.a==='OK').length,nok=res.filter(x=>x.a==='Not OK').length;
+  return{id:id||'CHK-'+String(Date.now()).slice(-6),cl:c.id,n:c.n,m:c.m,ind:S.ind,by,role,unit,at,res,ok,nok,score:Math.round(ok/Math.max(1,ok+nok)*100),seed}}
+const allSubs=()=>[...SUBS.filter(x=>x.ind===S.ind),...seedSubs()].sort((a,b)=>b.at-a.at);
+const subSt=x=>x.nok?x.nok+' issue'+(x.nok>1?'s':'')+' – action pending':'All OK – completed';
+const ago=t=>{const m=Math.max(0,Math.round((Date.now()-t)/6e4));return m<1?'Just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
+const isNew=x=>!x.seed&&!SEEN[x.id]&&x.by!==role().n;
+const ind=()=>IND.find(i=>i.k===S.ind)||IND[0];
+const role=()=>ROLES.find(r=>r.id===S.role)||ROLES[0];
+
+function genRows(p){
+  const r=rng(hash(p.id+S.ind)),I=ind(),rows=[];
+  for(let i=0;i<p.cnt;i++){
+    const o={id:p.pre+'-'+String(1040+p.cnt-i).padStart(4,'0')};
+    p.cols.forEach(([l,t,a])=>{let v;
+      if(t==='t')v=a[i%a.length];else if(t==='e')v=I.e[Math.floor(r()*I.e.length)];else if(t==='u')v=I.u[Math.floor(r()*I.u.length)];
+      else if(t==='p')v=PEOPLE[Math.floor(r()*PEOPLE.length)];else if(t==='c')v=CONTR[Math.floor(r()*CONTR.length)];
+      else if(t==='d')v=Math.round(a[0]+r()*(a[1]-a[0]));
+      else if(t==='n')v=+(a[0]+r()*(a[1]-a[0])).toFixed(a[3]||0);
+      else v=a[Math.floor(r()*a.length)];
+      o[l]=v});
+    rows.push(o)}
+  return rows}
+function build(){
+  DATA={};Object.values(PG).forEach(p=>{if(p.cols)DATA[p.id]=[...(ADDED[S.ind+p.id]||[]),...genRows(p)]});
+  buildProjects();buildCollab();
+  if(!role().f)SUBS.filter(x=>x.ind===S.ind&&!SEEN[x.id]).slice(0,5).reverse().forEach(x=>NOTIF.unshift({t:`${x.by} submitted ${x.n}`,d:`${x.unit} · ${subSt(x)}`,g:'checks',m:ago(x.at),un:1}))}
+const stCol=p=>p.cols[p.cols.length-1][0];
+const cell=(c,v)=>c[1]==='d'?fD(v):c[1]==='s'?pill(v):c[1]==='p'?`<span class="row" style="gap:7px">${av(v,22)}${esc(v)}</span>`:esc(v);
+
+/* ============ projects engine ============ */
+const TPL=[['1.1','Project charter & scope freeze',10,[]],['1.2','Budget sanction (AFE)',8,['1.1']],['1.3','MoC & HAZOP review',12,['1.1']],['1.M','Sanction received',0,['1.2','1.3']],
+['2.1','Basic engineering package',20,['1.M']],['2.2','Detailed engineering & P&IDs',30,['2.1']],['2.3','Vendor drawing approval',15,['2.2']],['2.M','Design freeze',0,['2.3']],
+['3.1','RFQ & technical bid evaluation',18,['2.1']],['3.2','PO placement – long-lead items',10,['3.1']],['3.3','Manufacturing & FAT',45,['3.2']],['3.4','Delivery to site',10,['3.3']],['3.M','Material at site',0,['3.4']],
+['4.1','Civil & structural works',35,['2.2']],['4.2','Mechanical erection',30,['3.M','4.1']],['4.3','Piping & hydrotest',25,['4.2']],['4.4','Electrical & instrumentation',28,['4.2']],['4.M','Mechanical completion',0,['4.3','4.4']],
+['5.1','Pre-commissioning & loop checks',12,['4.M']],['5.2','PSSR & statutory clearances',7,['5.1']],['5.3','Commissioning & performance trial',14,['5.2']],['5.4','Handover & project closeout',8,['5.3']],['5.M','Commercial operation',0,['5.3']]];
+const PHN=['Initiation & Approvals','Engineering & Design','Procurement','Construction & Installation','Commissioning & Handover'];
+const PDEF=[['P1','Boiler #3 Efficiency Upgrade','CPX-2601','Energy',18.4,-120,1,6,.92],['P2','ETP Capacity Expansion (2 → 3.5 MLD)','CPX-2602','Environment',32,-75,1.2,0,1],['P3','DCS Migration – Unit 2','CPX-2603','Automation',12.6,-160,.9,16,.78],
+['P4','Warehouse Automation – Phase 1','CPX-2604','Logistics',9.8,-30,.8,0,1.02],['P5','Rooftop Solar 2 MWp','CPX-2605','Sustainability',8.2,-185,.85,3,.97],['P6','Annual Turnaround 2027 – Preparation','OPX-2701','Turnaround',21.5,-12,.7,0,1]];
+function buildProjects(){
+  PROJ=PDEF.map(([id,n,code,cat,bud,st,sc,slip,eff],pi)=>{
+    const el=-st,T={};
+    const tasks=TPL.map(([tid,tn,d,deps],i)=>{const dur=Math.round(d*sc);const bs=deps.length?Math.max(...deps.map(x=>T[x].bs+T[x].d)):0;
+      const t={id:tid,n:tn,d:dur,deps,bs,ph:+tid[0],ms:d===0,owner:PEOPLE[(i+pi*3)%PEOPLE.length]};T[tid]=t;return t});
+    const end=Math.max(...tasks.map(t=>t.bs+t.d));
+    // backward pass for critical path
+    [...tasks].reverse().forEach(t=>{const su=tasks.filter(x=>x.deps.includes(t.id));t.lf=su.length?Math.min(...su.map(x=>x.lf-x.d)):end;t.crit=t.lf-(t.bs+t.d)<=0});
+    tasks.forEach(t=>{t.s=t.bs+(t.bs>el*.45?slip:0);const te=el-t.s;
+      t.p=t.ms?(te>=0?100:0):Math.max(0,Math.min(100,Math.round(te/t.d*100*eff)));if(!t.ms&&te>=t.d&&eff>=.9)t.p=100});
+    return{id,n,code,cat,bud,st,slip,eff,tasks,mgr:PEOPLE[(pi*2+1)%PEOPLE.length],sponsor:PEOPLE[(pi+4)%PEOPLE.length]}})}
+const pEnd=p=>Math.max(...p.tasks.map(t=>t.s+t.d));
+const pBEnd=p=>Math.max(...p.tasks.map(t=>t.bs+t.d));
+const pProg=p=>{const w=p.tasks.filter(t=>!t.ms);return Math.round(w.reduce((a,t)=>a+t.p*t.d,0)/w.reduce((a,t)=>a+t.d,0))};
+const pPlan=p=>{const el=-p.st,w=p.tasks.filter(t=>!t.ms);return Math.round(w.reduce((a,t)=>a+Math.max(0,Math.min(1,(el-t.bs)/t.d))*t.d,0)/w.reduce((a,t)=>a+t.d,0)*100)};
+const pSPI=p=>{const pl=pPlan(p);return pl?+(pProg(p)/pl).toFixed(2):1};
+const pCPI=p=>+(0.86+(hash(p.id)%24)/100).toFixed(2);
+const pAct=p=>+(p.bud*pProg(p)/100/pCPI(p)).toFixed(1);
+const pCom=p=>+Math.min(p.bud*1.02,pAct(p)+p.bud*.18*(pProg(p)<95?1:0)).toFixed(1);
+const pEAC=p=>+(p.bud/pCPI(p)).toFixed(1);
+const pRag=p=>{const s=pSPI(p),c=pCPI(p);return s<.85||c<.88?'Delayed':s<.95||c<.95?'At risk':'On track'};
+const tSt=t=>t.p>=100?'Done':t.p>=85?'In review':t.p>0?'In progress':'To do';
+const curP=()=>PROJ.find(p=>p.id===UI.proj)||PROJ[0];
+const nextMs=p=>p.tasks.find(t=>t.ms&&t.p<100);
+
+/* ============ collaboration seed ============ */
+function buildCollab(){
+  const I=ind(),me=role().n;
+  NOTIF=[
+   {t:`MoC-1052 needs your approval`,d:'Replace PRV with higher capacity model · L4 – Plant Head',g:'mc-app',m:'12 min ago',un:1,c:'moc'},
+   {t:`Hot work permit expiring in 2 hours`,d:`${I.u[0]} · Welding on pipe rack`,g:'sf-ptw',m:'35 min ago',un:1,c:'safety'},
+   {t:`Vibration alarm on ${I.e[2]}`,d:'Reading above alarm limit, work order suggested',g:'mt-pred',m:'1 h ago',un:1,c:'maintenance'},
+   {t:'DCS Migration – Unit 2 is behind schedule',d:'SPI dropped below 0.85 this week',g:'pj-dash',m:'3 h ago',un:1,c:'projects'},
+   {t:'NCR-1049 assigned to you',d:'Moisture above limit · In-process',g:'qm-ncr',m:'Yesterday',un:0,c:'quality'},
+   {t:'3 items fell below reorder level',d:'Bearing 6312, V-belt SPB 2500, Filter element 10 µ',g:'st-reo',m:'Yesterday',un:0,c:'stores'}];
+  MAILS=[
+   {f:'Priya Nair',s:'ETP expansion: civil contractor mobilised',b:`Hi ${me.split(' ')[0]},\n\nTrident Civil Contractors mobilised on site this morning with 42 workers. Gate passes and induction are complete for all of them.\n\nExcavation for the equalisation tank starts tomorrow. I have updated the schedule; civil works remain on the baseline and the float on mechanical erection is intact.\n\nCould you approve the revised cash-flow forecast before Friday's review?\n\nRegards,\nPriya`,m:'09:42',un:1,g:'pj-plan',gl:'Open schedule'},
+   {f:'Sneha Kulkarni',s:'Near-miss trend: forklift and pedestrian interface',b:`Team,\n\nWe have logged 3 near misses this month at the ${I.u[2]} crossing. I am proposing physical barriers and a marked pedestrian walkway.\n\nDetails and photographs are attached to the observations. Please review before the safety committee meeting.\n\nSneha`,m:'08:15',un:1,g:'sf-obs',gl:'View observations'},
+   {f:'Arjun Deshmukh',s:`RCA completed: ${I.e[2]} bearing failure`,b:`The 5-Why analysis points to lubrication interval being too long for the current duty cycle. Corrective actions:\n\n1. PM frequency revised from quarterly to monthly\n2. Vibration route extended to this equipment\n3. Spare bearing added to minimum stock\n\nRequest you to close the breakdown report once you have reviewed.\n\nArjun`,m:'Yesterday',un:1,g:'mt-bd',gl:'Open RCA'},
+   {f:'Meera Iyer',s:'Customer audit scheduled next Thursday',b:`Western Coatings Pvt. Ltd. has confirmed their audit for next Thursday. Scope covers the packaging line, document control and CAPA effectiveness.\n\nAll section heads, please ensure open CAPAs are updated by Tuesday.\n\nMeera`,m:'Yesterday',un:0,g:'qm-aud',gl:'Open audit plan'},
+   {f:'Imran Shaikh',s:'Turnaround long-lead spares: status',b:`11 of 14 long-lead items are received and verified. Exchanger tube bundle is in transit, expected in 9 days. Catalyst and structured packing POs are placed.\n\nImran`,m:'Mon',un:0,g:'sd-mat',gl:'Material verification'},
+   {f:'Clappia Plant Suite',s:'Weekly digest: 14 approvals, 6 overdue actions',b:`Here is your plant summary for the week.\n\n• Projects: 4 of 6 on track\n• Maintenance: PM compliance 94%\n• Safety: 0 lost-time incidents, 412 days LTI free\n• Quality: 5 NCRs open, 2 CAPAs overdue\n\nOpen your dashboards for details.`,m:'Mon',un:0,g:'pj-dash',gl:'Open dashboards'}];
+  const c=(w,t,m)=>({w,t,m});
+  CHATS={
+   'plant-leadership':{n:'# plant-leadership',g:1,ms:[c('Rahul Menon','Morning all. Production review at 10:30, please update your dashboards before that.','08:02'),c('Priya Nair','Projects dashboard is updated. DCS migration needs a decision on the vendor delay.','08:10'),c('Arjun Deshmukh','PM compliance at 94% this week. Two overdue jobs are waiting on spares.','08:14'),c('Sneha Kulkarni','412 days without an LTI today. Toolbox talk theme this week is line of fire.','08:21')]},
+   'turnaround-2027':{n:'# turnaround-2027',g:1,ms:[c('Kavita Joshi','Contractor prequalification is done for 5 of 6 agencies.','Yesterday'),c('Imran Shaikh','Tube bundle is in transit. ETA 9 days.','Yesterday'),c('Vikram Rao','Scope freeze sign-off is pending from operations, will close it today.','09:05')]},
+   'safety-alerts':{n:'# safety-alerts',g:1,ms:[c('Sneha Kulkarni',`Hot work permit at ${I.u[0]} expires at 13:00. Issuer to revalidate if work continues.`,'10:48')]},
+   'Priya Nair':{n:'Priya Nair',ms:[c('Priya Nair','Can you look at the revised cash flow for the ETP project?','09:44')]},
+   'Arjun Deshmukh':{n:'Arjun Deshmukh',ms:[c('Arjun Deshmukh','RCA is uploaded. Need your sign-off to close it.','Yesterday')]},
+   'Meera Iyer':{n:'Meera Iyer',ms:[c('Meera Iyer','Sharing the audit agenda shortly.','Yesterday')]}}}
+const unN=()=>NOTIF.filter(n=>n.un).length,unM=()=>MAILS.filter(m=>m.un).length;
+function notify(t,d,g){NOTIF.unshift({t,d,g,m:'Just now',un:1});const b=$('#bell');if(b)b.innerHTML=ic('bell')+`<span class="dot">${unN()}</span>`}
+
+/* ============ charts ============ */
+function donut(items){const tot=items.reduce((a,i)=>a+i.v,0)||1;let acc=0;const R=52,C=2*Math.PI*R;
+  return `<div class="row wrap" style="gap:18px"><svg width="130" height="130" viewBox="0 0 130 130" role="img" aria-label="Status split"><g transform="rotate(-90 65 65)">${items.map(i=>{const f=i.v/tot,s=`<circle cx="65" cy="65" r="${R}" fill="none" stroke="${i.c}" stroke-width="16" stroke-dasharray="${Math.max(0,f*C-2)} ${C}" stroke-dashoffset="${-acc*C}"/>`;acc+=f;return s}).join('')}</g><text x="65" y="62" text-anchor="middle" font-size="22" font-weight="700" fill="#172636">${tot}</text><text x="65" y="80" text-anchor="middle" font-size="11" fill="#6f8196">records</text></svg>
+  <div style="display:grid;gap:6px;flex:1;min-width:140px">${items.map(i=>`<div class="row sm" style="gap:8px"><i style="width:9px;height:9px;border-radius:3px;background:${i.c}"></i><span style="flex:1;color:var(--ink2)">${esc(i.l)}</span><b>${i.v}</b></div>`).join('')}</div></div>`}
+function hbars(items,c='#8dc4f8'){const mx=Math.max(...items.map(i=>i.v),1);return items.map(i=>`<div class="hb"><span title="${esc(i.l)}">${esc(i.l)}</span><div class="bar" style="height:9px"><i style="width:${i.v/mx*100}%;background:${i.c||c};border-radius:99px"></i></div><b>${i.v}</b></div>`).join('')}
+function line(labels,series,o={}){const W=640,H=o.h||220,l=40,r=14,t=14,b=28,all=series.flatMap(s=>s.p.filter(v=>v!=null)).concat(o.limit||[]);
+  let mx=Math.max(...all)*1.1,mn=o.min??Math.min(0,...all);if(mx===mn)mx=mn+1;
+  const X=i=>l+i*(W-l-r)/(labels.length-1||1),Y=v=>t+(1-(v-mn)/(mx-mn))*(H-t-b);
+  let g='';for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4;g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#eef2f7"/><text x="${l-6}" y="${Y(v)+4}" font-size="10.5" fill="#9aa9bb" text-anchor="end">${v>=100?Math.round(v):+v.toFixed(1)}</text>`}
+  const st=Math.ceil(labels.length/8);labels.forEach((x,i)=>{if(i%st===0)g+=`<text x="${X(i)}" y="${H-8}" font-size="10.5" fill="#9aa9bb" text-anchor="middle">${esc(x)}</text>`});
+  if(o.limit)g+=`<line x1="${l}" x2="${W-r}" y1="${Y(o.limit)}" y2="${Y(o.limit)}" stroke="#e06a7a" stroke-dasharray="5 4"/><text x="${W-r}" y="${Y(o.limit)-5}" font-size="10.5" fill="#cf4558" text-anchor="end">${esc(o.ll||'Limit')} ${o.limit}</text>`;
+  if(o.now!=null)g+=`<line x1="${X(o.now)}" x2="${X(o.now)}" y1="${t}" y2="${H-b}" stroke="#2196f3" stroke-dasharray="3 3"/><text x="${X(o.now)+4}" y="${t+9}" font-size="10" fill="#1479d1">Today</text>`;
+  series.forEach(s=>{const pts=s.p.map((v,i)=>v==null?null:[X(i),Y(v)]).filter(Boolean);if(!pts.length)return;
+    const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    if(s.area)g+=`<path d="${d} L${pts[pts.length-1][0]} ${H-b} L${pts[0][0]} ${H-b}Z" fill="${s.c}" opacity=".1"/>`;
+    g+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="2.2" ${s.dash?'stroke-dasharray="6 5"':''} stroke-linejoin="round"/>`;
+    if(!s.dash&&pts.length<16)g+=pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.6" fill="#fff" stroke="${s.c}" stroke-width="1.6"/>`).join('')});
+  return `<div class="lg" style="margin-bottom:8px">${series.map(s=>`<span><i style="background:${s.c}"></i>${esc(s.n)}</span>`).join('')}</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img" aria-label="${esc(o.aria||'Trend chart')}">${g}</svg>`}
+function cols(labels,series,o={}){const W=640,H=o.h||220,l=40,r=10,t=12,b=28,mx=Math.max(...series.flatMap(s=>s.p))*1.12||1,gw=(W-l-r)/labels.length,bw=Math.min(22,gw*.7/series.length);
+  const Y=v=>t+(1-v/mx)*(H-t-b);let g='';for(let i=0;i<=4;i++){const v=mx*i/4;g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#eef2f7"/><text x="${l-6}" y="${Y(v)+4}" font-size="10.5" fill="#9aa9bb" text-anchor="end">${v>=20?Math.round(v):+v.toFixed(1)}</text>`}
+  labels.forEach((x,i)=>{const cx=l+gw*(i+.5);g+=`<text x="${cx}" y="${H-8}" font-size="10.5" fill="#9aa9bb" text-anchor="middle">${esc(String(x).slice(0,Math.max(6,Math.floor(gw/6))))}</text>`;
+    series.forEach((s,j)=>{const x0=cx-(series.length*bw+(series.length-1)*3)/2+j*(bw+3);g+=`<rect x="${x0}" y="${Y(s.p[i])}" width="${bw}" height="${Math.max(0,H-b-Y(s.p[i]))}" rx="4" fill="${s.c}"><title>${esc(s.n)}: ${s.p[i]}</title></rect>`})});
+  return `<div class="lg" style="margin-bottom:8px">${series.map(s=>`<span><i style="background:${s.c}"></i>${esc(s.n)}</span>`).join('')}</div><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img" aria-label="${esc(o.aria||'Bar chart')}">${g}</svg>`}
+const ring=(p,c,sz=46)=>{const R=sz/2-5,C=2*Math.PI*R;return `<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${R}" fill="none" stroke="#eef2f7" stroke-width="5"/><circle cx="${sz/2}" cy="${sz/2}" r="${R}" fill="none" stroke="${c}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${p/100*C} ${C}" transform="rotate(-90 ${sz/2} ${sz/2})"/><text x="${sz/2}" y="${sz/2+4}" text-anchor="middle" font-size="${sz/4}" font-weight="700" fill="#172636">${p}</text></svg>`};
+const card=(title,body,extra='')=>`<div class="card pad"><div class="row" style="margin-bottom:12px"><h3>${title}</h3><span class="sp"></span>${extra}</div>${body}</div>`;
+const groupBy=(rows,k)=>{const m={};rows.forEach(r=>m[r[k]]=(m[r[k]]||0)+1);return Object.entries(m).map(([l,v])=>({l,v})).sort((a,b)=>b.v-a.v)};
+
+/* ============ shell ============ */
+function shell(){
+  const R=role(),I=ind();
+  const nav=(id,icn,lab,n)=>`<button class="ni ${UI.page===id?'on':''}" data-go="${id}">${ic(icn)}<span>${lab}</span>${n?`<span class="n">${n}</span>`:''}</button>`;
+  $('#app').innerHTML=`<div class="shell"><aside class="side" id="side">
+   <div class="brand"><img class="blogo" src="${LOGO}" alt="Clappia"><span class="bsub">Plant Suite</span></div>
+   <div class="ws"><b>${esc(S.co)}</b><span>${esc(I.n)}</span></div>
+   <div class="lbl nl">Workspace</div>
+   ${R.f?nav('home','check','My checklists')+nav('checks','docs','My submissions'):nav('home','home','Home')}${nav('inbox','inbox','Inbox',unM())}${nav('chat','chat','Chat')}${R.f?'':nav('checks','check','Checklists',allSubs().filter(isNew).length)+nav('documents','docs','Documents')+'<div class="lbl nl">Systems</div><div id="sysnav"></div>'}
+   <a class="custom" href="https://www.clappia.com" target="_blank" rel="noopener"><b>${ic('plus','color:var(--acc)')}Create custom app ${ic('ext','width:13px;height:13px;margin-left:auto;color:var(--faint)')}</b><span>Build any plant app without code on clappia.com</span></a>
+   <div class="sp"></div>
+   ${R.f?'':nav('settings','gear','Data connection')}
+   <button class="ni" data-act="contact">${ic('phone')}<span>Contact us</span></button>
+   <button class="ni" data-act="logout">${ic('out')}<span>Switch role or industry</span></button>
+  </aside>
+  <div style="min-width:0"><header class="top">
+    <button class="ib burger" data-act="menu" aria-label="Menu">${ic('menu')}</button>
+    <div class="crumb" id="crumb"></div>
+    <div class="srch"><span>${ic('search')}</span><input id="gs" placeholder="Search systems and pages" autocomplete="off"><div id="gsr"></div></div>
+    <button class="btn pri sm" data-act="contact">${ic('phone','width:15px;height:15px')}<span>Contact us</span></button>
+    <div style="position:relative"><button class="ib" id="bell" data-act="bell" aria-label="Notifications">${ic('bell')}<span class="dot">${unN()}</span></button><div id="npop"></div></div>
+    <div class="row hide-m" style="gap:8px">${av(R.n,32)}<div style="line-height:1.2"><b style="font-size:13px">${esc(R.n)}</b><div class="sm mute">${esc(R.t)}</div></div></div>
+  </header><main class="main"><div class="in" id="main"></div></main></div></div>`;
+  render()}
+function sysNav(){
+  const cur=PG[UI.page]?.m||(MODS.find(m=>m.id===UI.page)?.id);
+  const sn=$('#sysnav');if(sn)sn.innerHTML=MODS.map(m=>{const op=UI.open===m.id;return `<button class="ni ${UI.page===m.id?'on':''} ${op?'open':''}" data-act="mod" data-v="${m.id}"><span style="color:${m.c};display:grid">${ic(m.id)}</span><span>${m.n}</span>${ic('cv').replace('class="ic"','class="ic cv"')}</button>${op?`<div class="sub">${ORDER[m.id].map(p=>`<button class="${UI.page===p?'on':''}" data-go="${p}">${PG[p].n}</button>`).join('')}</div>`:''}`}).join('');
+  document.querySelectorAll('.side>.ni[data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===UI.page))}
+function go(p){UI.page=p;UI.q='';UI.f='All';const m=PG[p]?.m||(MODS.find(x=>x.id===p)?.id);if(m&&m!=='collab')UI.open=m;try{history.replaceState(null,'','#'+p)}catch(e){}$('#side')?.classList.remove('open');render();window.scrollTo(0,0)}
+function render(){
+  const p=UI.page,m=MODS.find(x=>x.id===p),pd=PG[p];sysNav();
+  const M=pd&&MODS.find(x=>x.id===pd.m);
+  $('#crumb').innerHTML=m?esc(m.full):pd?(M?`<span>${esc(M.n)} / </span>`:'')+esc(pd.n):({home:role().f?'My checklists':'Home',inbox:'Inbox',chat:'Chat',settings:'Data connection',checks:role().f?'My submissions':'Checklists'}[p]||'');
+  if(role().f&&(m||pd||p==='settings')){UI.page='home';return render()}
+  const V={home:role().f?vField:vHome,checks:vSubs,inbox:vInbox,chat:vChat,settings:vSettings,'pj-plan':vPlan,'pj-tasks':vTasks,'pj-budget':vBudget,'pj-capex':vCapex,'pj-dash':vDash};
+  $('#main').innerHTML=m?vModule(m):V[p]?V[p]():pd?vPage(pd):vHome();
+  if(p==='chat'){const b=$('#msgs');if(b)b.scrollTop=b.scrollHeight}
+  if(p==='pj-plan'){const g=$('#gw');if(g&&g.dataset.x)g.scrollLeft=+g.dataset.x}}
+const head=(M,title,desc,btn='')=>`<div class="ph"><span class="mi" style="background:${M.c}1a;color:${M.c}">${ic(M.id)}</span><div style="flex:1;min-width:220px"><h1>${esc(title)}</h1><p>${esc(desc)}</p></div>${btn}</div>`;
+
+/* ============ home ============ */
+function vHome(){
+  const R=role(),I=ind(),h=new Date().getHours(),gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const on=PROJ.filter(p=>pRag(p)==='On track').length;
+  const k=[['Plant availability','96.2%','+0.8 pts vs last week','up'],['Projects on track',on+' / '+PROJ.length,'Portfolio ₹ '+PROJ.reduce((a,p)=>a+p.bud,0).toFixed(1)+' Cr',''],['Open work orders',DATA['mt-wo'].filter(r=>r.Status!=='Completed').length,'PM compliance 94%','up'],['Active permits',DATA['sf-ptw'].filter(r=>r.Status==='Active').length,'412 days LTI free','up'],['Open NCRs',DATA['qm-ncr'].filter(r=>r.Status!=='Closed').length,'2 CAPAs overdue','dn']];
+  const news=[['Projects','#2196f3','ETP expansion crosses 40% with civil works on baseline','The equalisation tank excavation started this week. The team has held the baseline schedule for 11 straight weeks.','pj-plan'],
+   ['Safety','#e8833a','412 days without a lost-time incident','A plant record. Near-miss reporting is up 28% this quarter, led by the utilities team.','sf-obs'],
+   ['Maintenance','#0e9f8e',`Predictive route catches bearing fault on ${I.e[2]}`,'Vibration trending flagged the fault nine days before failure, avoiding an estimated 14 hours of downtime.','mt-pred'],
+   ['Quality','#2f9e6b','Zero major findings in ISO 9001 surveillance audit','Auditors highlighted the closed-loop CAPA process and document control.','qm-aud']];
+  const ann=[[2,'Annual turnaround 2027 kick-off','Scope freeze workshop for all section heads, Conference Room 2.'],[5,'Mock drill: toxic gas release','All units to participate. Assembly point wardens to report by 10:45.'],[9,'Customer audit: packaging line','Open CAPAs to be updated two days prior.'],[14,'Town hall with the Plant Head','Quarterly performance and recognition awards.']];
+  const upd=[['Priya Nair','updated the schedule for','ETP Capacity Expansion','pj-plan','12 min'],['Arjun Deshmukh','closed breakdown report on',I.e[2],'mt-bd','40 min'],['Sneha Kulkarni','issued a hot work permit for',I.u[0],'sf-ptw','1 h'],['Meera Iyer','raised CAPA from','NCR-1049','qm-capa','2 h'],['Imran Shaikh','verified shutdown material','Spiral wound gaskets set','sd-mat','3 h'],['Kavita Joshi','approved contractor',CONTR[0],'cw-onb','5 h']];
+  const art=c=>`<svg class="art" viewBox="0 0 600 170" preserveAspectRatio="xMidYMid slice" style="width:100%;background:${c}14" aria-hidden="true"><g fill="${c}" opacity=".16"><rect x="40" y="96" width="70" height="74"/><rect x="120" y="60" width="46" height="110"/><rect x="176" y="110" width="110" height="60"/><rect x="300" y="40" width="26" height="130"/><rect x="336" y="84" width="90" height="86"/><circle cx="480" cy="120" r="44"/><rect x="520" y="70" width="50" height="100"/></g><g stroke="${c}" stroke-width="3" fill="none" opacity=".55"><path d="M40 60h60M70 84h110M150 36h90M260 62h130M400 30h80M430 56h120" stroke-linecap="round"/></g></svg>`;
+  return `<div class="hero"><div style="flex:1;min-width:240px"><div class="lbl">${esc(S.co)}</div><h1 style="margin:4px 0 6px">${gr}, ${esc(R.n.split(' ')[0])}</h1><p class="mute" style="margin:0;max-width:60ch">Everything your plant runs on, in one place. ${unN()} notifications and ${unM()} unread messages are waiting for you.</p></div>
+   <div class="row wrap"><button class="btn pri" data-go="${R.home==='home'?'pj-dash':R.home}">${ic(R.home==='home'?'projects':R.home,'width:16px;height:16px')}Open ${R.home==='home'?'dashboards':esc(MODS.find(m=>m.id===R.home).n)}</button><button class="btn" data-go="inbox">${ic('inbox','width:16px;height:16px')}Inbox</button></div></div>
+  <div class="kpis">${k.map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b>${x[1]}</b><small class="${x[3]}">${x[2]}</small></div>`).join('')}</div>
+  ${subsCard()}
+  <div class="row"><h2>Latest news</h2></div>
+  <div class="news"><button class="card feat" data-go="${news[0][4]}" style="text-align:left;padding:0">${art(news[0][1])}<div class="pad"><span class="tag" style="background:${news[0][1]}1a;color:${news[0][1]}">${news[0][0]}</span><h2 style="margin:8px 0 6px;font-size:20px">${esc(news[0][2])}</h2><p class="mute" style="margin:0">${esc(news[0][3])}</p></div></button>
+   <div class="card pad">${news.slice(1).map(n=>`<div class="li" style="cursor:pointer" data-go="${n[4]}"><div style="flex:1"><span class="tag" style="background:${n[1]}1a;color:${n[1]}">${n[0]}</span><h3 style="margin:6px 0 3px">${esc(n[2])}</h3><div class="sm mute">${esc(n[3])}</div></div></div>`).join('')}</div></div>
+  <div class="grid c2">${card('Announcements',ann.map(a=>{const d=dAt(a[0]);return `<div class="li"><div class="dt"><b>${d.getDate()}</b><span>${MON[d.getMonth()]}</span></div><div><b>${esc(a[1])}</b><div class="sm mute">${esc(a[2])}</div></div></div>`}).join(''))}
+   ${card('Updates from your teams',upd.map(u=>`<div class="li" style="cursor:pointer;padding:9px 0" data-go="${u[3]}">${av(u[0])}<div style="flex:1"><b>${esc(u[0])}</b> <span class="mute">${u[1]}</span> <b>${esc(u[2])}</b><div class="sm mute">${u[4]} ago</div></div></div>`).join(''))}</div>
+  <div class="row" style="margin-top:6px"><div><h2>Your systems</h2><div class="sm mute">Ten connected systems on one platform. Open any of them to explore.</div></div></div>
+  <div class="mods">${MODS.map(m=>{const pgs=ORDER[m.id],att=m.id==='projects'?PROJ.filter(p=>pRag(p)!=='On track').length:pgs.reduce((a,p)=>a+DATA[p].filter(r=>tone(r[stCol(PG[p])])==='r').length,0);
+    return `<button class="mod" data-go="${m.id}"><div class="row"><span class="mi" style="background:${m.c}1a;color:${m.c}">${ic(m.id)}</span><b style="font-size:15px">${m.n}</b></div><p>${m.tg}</p><div class="ft"><span>${pgs.length} workspaces</span><span style="color:${att?'var(--r)':'var(--g)'};font-weight:600">${att?att+' need attention':'All clear'}</span></div></button>`}).join('')}
+   <a class="mod dash" href="https://www.clappia.com" target="_blank" rel="noopener"><div class="row"><span class="mi" style="background:#fff;color:var(--acc)">${ic('plus')}</span><b style="font-size:15px">Create custom app</b></div><p>Need something specific to your plant? Build it without code on Clappia.</p><div class="ft"><span>www.clappia.com</span>${ic('ext','width:14px;height:14px')}</div></a></div>`}
+
+/* ============ checklists (field roles fill, managers review) ============ */
+const subRow=x=>`<div class="li" style="cursor:pointer;padding:10px 0" data-act="sub" data-v="${x.id}">${av(x.by)}<div style="flex:1;min-width:0"><b>${esc(x.n)}</b>${isNew(x)?'<span class="newtag">New</span>':''}<div class="sm mute">${esc(x.by)} · ${esc(x.role)} · ${esc(x.unit)} · ${ago(x.at)}</div></div><div style="text-align:right">${pill(subSt(x))}<div class="sm mute" style="margin-top:3px">${x.score}% compliant</div></div></div>`;
+function subsCard(){const R=role(),all=allSubs(),mine=R.home!=='home'?all.filter(x=>x.m===R.home):all,list=(mine.length?mine:all).slice(0,5),nw=all.filter(isNew).length;
+  return card('Checklists from the field'+(nw?`<span class="newtag">${nw} new</span>`:''),list.map(subRow).join('')+`<div class="sm mute" style="margin-top:8px">Submitted by operators, technicians and inspectors from their role view. New submissions appear here as soon as they are filed.</div>`,`<button class="btn sm" data-go="checks">View all</button>`)}
+function vField(){const R=role(),I=ind(),cl=checklists(),own=cl.filter(c=>c.m===R.m),oth=cl.filter(c=>c.m!==R.m),my=SUBS.filter(x=>x.by===R.n&&x.ind===S.ind),day=new Date().toDateString();
+  const done=id=>my.find(x=>x.cl===id&&new Date(x.at).toDateString()===day),td=own.filter(c=>done(c.id)).length;
+  const cardC=c=>{const M=MODS.find(m=>m.id===c.m),d=done(c.id);return `<div class="card pad clc"><div class="row"><span class="mi" style="background:${M.c}1a;color:${M.c}">${ic(M.id)}</span><div style="flex:1;min-width:0"><b style="font-size:15px">${esc(c.n)}</b><div class="sm mute">${M.n} · ${c.items.length} checkpoints</div></div></div><div class="row">${d?pill('Completed today'):pill('Due today')}<span class="sp"></span><button class="btn ${d?'':'pri'} sm" data-act="fill" data-v="${c.id}">${d?'Fill again':'Start checklist'}</button></div></div>`};
+  const h=new Date().getHours();
+  return `<div class="hero"><div style="flex:1;min-width:240px"><div class="lbl">${esc(S.co)} · ${esc(R.t)}</div><h1 style="margin:4px 0 6px">${h<12?'Good morning':h<17?'Good afternoon':'Good evening'}, ${esc(R.n.split(' ')[0])}</h1><p class="mute" style="margin:0;max-width:60ch">Your checklists for this shift are ready. Fill them in on the spot; your supervisors see every submission on their dashboard right away.</p></div></div>
+  <div class="kpis">${[['Assigned this shift',own.length,MODS.find(m=>m.id===R.m).n],['Completed today',td,own.length-td+' remaining'],['Submitted by you',my.length,'on this device'],['Issues you raised',my.reduce((a,x)=>a+x.nok,0),'marked Not OK']].map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>
+  <h2>Your checklists</h2><div class="grid c3">${own.map(cardC).join('')}</div>
+  <h2>Other checklists at this plant</h2><div class="grid c3">${oth.map(cardC).join('')}</div>
+  ${card('Your recent submissions',my.slice(0,5).map(subRow).join('')||'<div class="mute">Nothing submitted yet. Start a checklist above.</div>',my.length?`<button class="btn sm" data-go="checks">View all</button>`:'')}`}
+function vSubs(){const R=role(),all=R.f?SUBS.filter(x=>x.by===R.n&&x.ind===S.ind):allSubs(),iss=all.reduce((a,x)=>a+x.nok,0);
+  const byM=MODS.map(m=>({l:m.n,v:all.filter(x=>x.m===m.id).length,c:m.c+'aa'})).filter(x=>x.v);
+  return `<div class="ph"><span class="mi" style="background:var(--acc-s);color:var(--acc)">${ic('check')}</span><div style="flex:1"><h1>${R.f?'My submissions':'Checklists from the field'}</h1><p>${R.f?'Everything you have submitted from this device.':'Every checklist filed by operators, technicians and inspectors, with issues flagged for action.'}</p></div>${R.f?`<button class="btn pri" data-go="home">${ic('plus','width:16px;height:16px')}Fill a checklist</button>`:''}</div>
+  <div class="kpis">${[['Submissions',all.length,'in this plant'],['New for you',all.filter(isNew).length,'not yet opened'],['Average compliance',(all.length?Math.round(all.reduce((a,x)=>a+x.score,0)/all.length):0)+'%','across checkpoints'],['Issues flagged',iss,'marked Not OK']].map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>
+  ${!R.f&&byM.length?card('Submissions by system',hbars(byM)):''}
+  <div class="card"><div class="tw"><table><thead><tr><th>ID</th><th>Checklist</th><th>System</th><th>Submitted by</th><th>Unit</th><th>When</th><th class="num">Compliance</th><th>Status</th></tr></thead><tbody>${all.map(x=>`<tr data-act="sub" data-v="${x.id}"><td class="mute">${x.seed?'CHK-'+(1040-+x.id.slice(4)):x.id}</td><td><b>${esc(x.n)}</b>${isNew(x)?'<span class="newtag">New</span>':''}</td><td>${MODS.find(m=>m.id===x.m).n}</td><td><span class="row" style="gap:7px">${av(x.by,22)}${esc(x.by)}</span></td><td>${esc(x.unit)}</td><td class="mute">${ago(x.at)}</td><td class="num">${x.score}%</td><td>${pill(subSt(x))}</td></tr>`).join('')||'<tr style="cursor:default"><td colspan="8" class="mute" style="text-align:center;padding:26px">No submissions yet.</td></tr>'}</tbody></table></div></div>`}
+function fillForm(id){const c=checklists().find(x=>x.id===id),I=ind();if(!c)return;
+  modal(c.n,`<form id="clf" data-c="${c.id}"><div class="mb"><div class="f2"><div class="fld"><label>Unit / area</label><select name="unit">${I.u.map(u=>`<option>${esc(u)}</option>`).join('')}</select></div><div class="fld"><label>Shift</label><select name="shift"><option>A</option><option>B</option><option>C</option></select></div></div>
+   <div>${c.items.map((q,i)=>`<div class="cli"><div class="q">${i+1}. ${esc(q)}</div><div class="opt">${[['OK','o'],['Not OK','x'],['N/A','n']].map(([v,k])=>`<label><input type="radio" name="a${i}" value="${v}"><span class="${k}">${v}</span></label>`).join('')}</div><input name="r${i}" placeholder="Remark (needed if Not OK)" autocomplete="off"></div>`).join('')}</div>
+   <span class="err" id="cle"></span></div><div class="mf"><button type="button" class="btn" data-act="allok">Mark all OK</button><span class="sp"></span><button type="button" class="btn" data-act="close">Cancel</button><button class="btn pri">Submit checklist</button></div></form>`,'',1)}
+function subDrawer(id){const x=allSubs().find(s=>s.id===id);if(!x)return;if(!x.seed&&!role().f){SEEN[x.id]=1;store.set('seen',SEEN)}
+  modal(x.n,`<div class="mb"><div class="row wrap">${pill(subSt(x))}<span class="sm mute">${x.score}% compliant · ${x.ok} OK · ${x.nok} Not OK</span></div>
+   <div class="kv"><span>Submitted by</span><b style="font-weight:550"><span class="row" style="gap:7px">${av(x.by,22)}${esc(x.by)} · ${esc(x.role)}</span></b><span>Unit / area</span><b style="font-weight:550">${esc(x.unit)}</b><span>System</span><b style="font-weight:550">${MODS.find(m=>m.id===x.m).n}</b><span>Submitted</span><b style="font-weight:550">${new Date(x.at).toLocaleString()}</b></div>
+   <div>${x.res.map((r,i)=>`<div class="cli"><div class="row" style="align-items:flex-start"><span class="q" style="flex:1">${i+1}. ${esc(r.q)}</span><span class="pill t-${r.a==='OK'?'g':r.a==='Not OK'?'r':'b'}">${r.a}</span></div>${r.r?`<div class="sm mute">Remark: ${esc(r.r)}</div>`:''}</div>`).join('')}</div></div>`,
+   `<button class="btn" data-act="close">Close</button>${!role().f&&x.nok?`<button class="btn pri" data-act="subwo" data-v="${x.id}">Raise work order for issues</button>`:''}`,1);
+  if(!role().f&&S.role&&['home','checks'].includes(UI.page)){const o=$('#ovr').innerHTML;render();shellCount();$('#ovr').innerHTML=o}}
+function shellCount(){const b=document.querySelector('.side .ni[data-go="checks"] .n');if(b){const n=allSubs().filter(isNew).length;if(n)b.textContent=n;else b.remove()}}
+
+/* ============ module home ============ */
+function vModule(m){
+  const pgs=ORDER[m.id];let top='';
+  if(m.id==='projects'){
+    top=`<div class="kpis">${[['Active projects',PROJ.length,'across 6 categories'],['Portfolio budget','₹ '+PROJ.reduce((a,p)=>a+p.bud,0).toFixed(1)+' Cr','Actual ₹ '+PROJ.reduce((a,p)=>a+pAct(p),0).toFixed(1)+' Cr'],['On track',PROJ.filter(p=>pRag(p)==='On track').length,'by schedule and cost'],['At risk or delayed',PROJ.filter(p=>pRag(p)!=='On track').length,'need a decision'],['Milestones in 30 days',PROJ.flatMap(p=>p.tasks.filter(t=>t.ms&&t.p<100&&p.st+t.s<=30)).length,'across the portfolio']].map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>
+    <div class="grid c3">${PROJ.map(p=>{const ms=nextMs(p),rg=pRag(p);return `<button class="card pad" style="text-align:left;display:grid;gap:10px" data-act="openproj" data-v="${p.id}"><div class="row">${ring(pProg(p),TC[tone(rg)])}<div style="flex:1;min-width:0"><b>${esc(p.n)}</b><div class="sm mute">${p.code} · ${p.cat} · ${esc(p.mgr)}</div></div></div><div class="row wrap">${pill(rg)}<span class="sm mute">₹ ${p.bud} Cr · SPI ${pSPI(p)} · CPI ${pCPI(p)}</span></div><div class="sm mute">Next milestone: <b style="color:var(--ink)">${ms?esc(ms.n)+' · '+fD(p.st+ms.s):'All milestones achieved'}</b></div></button>`}).join('')}</div>`;
+  }else{
+    const all=pgs.flatMap(p=>DATA[p].map(r=>({r,p:PG[p]})));
+    const cnt=t=>all.filter(x=>tone(x.r[stCol(x.p)])===t).length;
+    top=`<div class="kpis">${[['Total records',all.length,pgs.length+' workspaces'],['Completed or healthy',cnt('g'),Math.round(cnt('g')/all.length*100)+'% of records'],['In progress',cnt('a')+cnt('b'),'being worked on'],['Need attention',cnt('r'),'overdue or critical']].map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>`}
+  const caps=pgs.map(p=>{const d=PG[p];let ft='';
+    if(d.cols){const rows=DATA[p],g={g:0,a:0,r:0,b:0};rows.forEach(r=>g[tone(r[stCol(d)])]++);ft=`<div class="bar">${['g','b','a','r'].map(t=>`<i style="width:${g[t]/rows.length*100}%;background:${TC[t]}"></i>`).join('')}</div><div class="ft"><span>${rows.length} records</span><span style="font-weight:600;color:${g.r?'var(--r)':'var(--g)'}">${g.r?g.r+' need attention':'All clear'}</span></div>`}
+    else ft=`<div class="ft"><span>${PROJ.length} projects</span><span style="color:${m.c};font-weight:600">Open →</span></div>`;
+    return `<button class="mod" data-go="${p}"><b style="font-size:15px">${d.n}</b><p>${d.d}</p>${ft}</button>`}).join('');
+  let side='';
+  if(m.id!=='projects'){const att=pgs.flatMap(p=>DATA[p].filter(r=>tone(r[stCol(PG[p])])==='r').slice(0,2).map(r=>({r,p:PG[p]}))).slice(0,6);
+    const byP=pgs.map(p=>({l:PG[p].n,v:DATA[p].filter(r=>tone(r[stCol(PG[p])])!=='g').length}));
+    side=`<div class="grid c2">${card('Needs attention',att.length?att.map(x=>`<div class="li" style="cursor:pointer;padding:9px 0" data-act="row" data-v="${x.p.id}|${x.r.id}"><div style="flex:1;min-width:0"><b>${esc(x.r[x.p.cols[0][0]])}</b><div class="sm mute">${x.r.id} · ${x.p.n}</div></div>${pill(x.r[stCol(x.p)])}</div>`).join(''):'<div class="mute">Nothing needs attention right now.</div>')}${card('Open items by workspace',hbars(byP,m.c+'99'))}</div>`}
+  return head(m,m.full,m.tg,`<button class="btn" data-act="contact">${ic('phone','width:15px;height:15px')}Talk to us about ${esc(m.n)}</button>`)+top+`<h2>Workspaces</h2><div class="mods">${caps}</div>`+side}
+
+/* ============ generic page ============ */
+function extra(p,rows){
+  const r=rng(hash(p.id)),wk=Array.from({length:12},(_,i)=>fD(-77+i*7,0));
+  if(p.x==='pred'){const I=ind(),mk=(b,g)=>wk.map((_,i)=>+(b+g*i*i/40+r()*.5).toFixed(1));return card('Vibration trend (mm/s RMS)',line(wk,[{n:I.e[2],c:'#e06a7a',p:mk(3.2,2.2)},{n:I.e[0],c:'#5aa6ee',p:mk(2.4,.3)},{n:I.e[6],c:'#35b889',p:mk(1.8,.1)}],{limit:7.1,ll:'Alarm',aria:'Vibration trend for three machines'}))}
+  if(p.x==='kpi'){const mo=Array.from({length:8},(_,i)=>MON[(TODAY.getMonth()-7+i+12)%12]);return `<div class="grid c2">${card('MTBF (hours)',line(mo,[{n:'MTBF',c:'#0e9f8e',area:1,p:mo.map((_,i)=>Math.round(360+i*14+r()*30))}],{min:300}))}${card('MTTR (hours)',line(mo,[{n:'MTTR',c:'#e7a93c',area:1,p:mo.map((_,i)=>+(5.2-i*.25+r()*.6).toFixed(1))}],{min:0}))}</div>`}
+  if(p.x==='env'){return card('Stack SO₂ against consent limit (mg/Nm³)',line(wk,[{n:'Stack SO₂',c:'#e8833a',area:1,p:wk.map(()=>Math.round(52+r()*30))}],{limit:100,ll:'Consent limit'}))}
+  if(p.x==='prod'){const d=Array.from({length:10},(_,i)=>fD(-9+i,0));return card(`Plan against actual (${ind().m} per day)`,cols(d,[{n:'Plan',c:'#cfe3f8',p:d.map(()=>Math.round(330+r()*20))},{n:'Actual',c:'#2196f3',p:d.map(()=>Math.round(295+r()*60))}]))}
+  if(p.x==='down'){const m={};rows.forEach(x=>m[x.Reason]=+((m[x.Reason]||0)+x['Duration (h)']).toFixed(1));const it=Object.entries(m).sort((a,b)=>b[1]-a[1]);return card('Downtime Pareto (hours by reason)',cols(it.map(i=>i[0]),[{n:'Hours lost',c:'#0ea5c6',p:it.map(i=>i[1])}]))}
+  return ''}
+function vPage(p){
+  const M=MODS.find(m=>m.id===p.m)||{id:'docs',c:'#2196f3',n:'Workspace'},rows=DATA[p.id],sc=stCol(p);
+  const sts=groupBy(rows,sc),cat=p.cols.find(c=>['o','u','c'].includes(c[1]))||p.cols.find(c=>c[1]==='p');
+  const k=[['Total records',rows.length,''],...sts.slice(0,4).map(s=>[s.l,s.v,tone(s.l)])];
+  return head(M,p.n,p.d,`<button class="btn pri" data-act="new" data-v="${p.id}">${ic('plus','width:16px;height:16px')}New record</button>`)+
+  `<div class="kpis">${k.map(x=>`<div class="card kpi"><span class="lbl">${esc(x[0])}</span><b style="${x[2]==='r'?'color:var(--r)':''}">${x[1]}</b><small>${x[2]?Math.round(x[1]/rows.length*100)+'% of records':'in this workspace'}</small></div>`).join('')}</div>
+  ${extra(p,rows)}
+  <div class="grid c2">${card('By '+sc.toLowerCase(),donut(sts.map(s=>({...s,c:TC[tone(s.l)]}))))}${cat?card('By '+cat[0].toLowerCase(),hbars(groupBy(rows,cat[0]).slice(0,6),M.c+'88')):''}</div>
+  <div class="card"><div class="tb"><input id="tq" placeholder="Search records" value="${esc(UI.q)}"><div class="seg" id="tf">${['All',...sts.map(s=>s.l)].map(s=>`<button class="${UI.f===s?'on':''}" data-act="filt" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div></div><div class="tw" id="tbl">${tbl(p)}</div></div>`}
+function tbl(p){const sc=stCol(p),q=UI.q.toLowerCase();
+  const rows=DATA[p.id].filter(r=>(UI.f==='All'||r[sc]===UI.f)&&(!q||Object.values(r).join(' ').toLowerCase().includes(q)));
+  return `<table><thead><tr><th>ID</th>${p.cols.map(c=>`<th class="${c[1]==='n'?'num':''}">${esc(c[0])}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr data-act="row" data-v="${p.id}|${r.id}"><td style="color:var(--mute);font-variant-numeric:tabular-nums">${r.id}</td>${p.cols.map(c=>`<td class="${c[1]==='n'?'num':''}">${cell(c,r[c[0]])}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${p.cols.length+1}" class="mute" style="text-align:center;padding:26px">No records match.</td></tr>`}</tbody></table>`}
+
+/* ============ projects: planning ============ */
+const projBar=(extra='')=>`<div class="tb" style="border:0;padding:0"><div class="fld" style="min-width:min(100%,300px)"><select data-ch="proj">${PROJ.map(p=>`<option value="${p.id}" ${p.id===UI.proj?'selected':''}>${esc(p.n)} (${p.code})</option>`).join('')}</select></div>${extra}</div>`;
+const seg=(key,opts)=>`<div class="seg">${opts.map(([v,l])=>`<button class="${UI[key]===v?'on':''}" data-act="set" data-v="${key}|${v}">${l}</button>`).join('')}</div>`;
+const tog=(key,l)=>`<button class="btn sm ${UI[key]?'soft':''}" data-act="tog" data-v="${key}">${l}</button>`;
+function vPlan(){
+  const p=curP(),M=MODS[0],ms=nextMs(p),fin=p.st+pEnd(p),bfin=p.st+pBEnd(p),sl=fin-bfin;
+  const k=[['Progress',pProg(p)+'%','Planned '+pPlan(p)+'%'],['Forecast finish',fD(fin),sl>0?sl+' days after baseline':'On baseline',sl>0?'dn':'up'],['SPI',pSPI(p),pRag(p)],['Critical tasks',p.tasks.filter(t=>t.crit&&!t.ms&&t.p<100).length,'remaining on critical path'],['Next milestone',ms?fD(p.st+ms.s,0):'Done',ms?ms.n:'All achieved']];
+  return head(M,'Planning & Scheduling',PG['pj-plan'].d,`<button class="btn pri" data-act="newtask">${ic('plus','width:16px;height:16px')}Add task</button>`)+
+  `<div class="kpis">${k.map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b>${x[1]}</b><small class="${x[3]||''}">${esc(x[2])}</small></div>`).join('')}</div>
+  <div class="card"><div class="tb">${projBar()}<span class="sp"></span>${seg('zoom',[['week','Weeks'],['month','Months'],['quarter','Quarters']])}${tog('base','Baseline')}${tog('crit','Critical path')}${tog('dep','Dependencies')}</div>${gantt(p)}
+   <div class="tb" style="border-top:1px solid var(--line);border-bottom:0"><div class="lg"><span><i style="background:#8dc4f8"></i>Planned work</span><span><i style="background:#2196f3"></i>Progress</span><span><i style="background:#c9d3df"></i>Baseline</span><span><i style="background:#e06a7a"></i>Critical path</span><span><i style="background:#172636;transform:rotate(45deg)"></i>Milestone</span></div><span class="sp"></span><span class="sm mute">Select any task to edit dates, progress and owner.</span></div></div>
+  ${resLoad(p)}`}
+function gantt(p){
+  const ppd={week:22,month:8,quarter:3.4}[UI.zoom],RH=34,HH=44,mob=window.innerWidth<700;
+  const rows=[];PHN.forEach((n,i)=>{const ch=p.tasks.filter(t=>t.ph===i+1);const s=Math.min(...ch.map(t=>t.s)),e=Math.max(...ch.map(t=>t.s+t.d)),w=ch.filter(t=>!t.ms);
+    rows.push({G:1,id:'PH'+(i+1),n,s,d:e-s,p:Math.round(w.reduce((a,t)=>a+t.p*t.d,0)/w.reduce((a,t)=>a+t.d,0))});if(!UI.col[p.id+i])ch.forEach(t=>rows.push(t))});
+  const min=Math.min(0,...p.tasks.map(t=>Math.min(t.s,t.bs)))-7,max=Math.max(pEnd(p),pBEnd(p))+14,W=(max-min)*ppd,H=rows.length*RH;
+  const X=d=>(d-min)*ppd,abs=d=>p.st+d,yi={};rows.forEach((r,i)=>yi[r.id]=i);
+  let hd='',gr='';
+  // month header
+  let d0=dAt(abs(min));d0.setDate(1);
+  for(let m=new Date(d0);;m.setMonth(m.getMonth()+1)){const off=Math.round((m-TODAY)/864e5)-p.st;if(off>max)break;const x=Math.max(0,X(off));
+    hd+=`<line x1="${x}" x2="${x}" y1="0" y2="${HH}" stroke="#e5eaf1"/><text x="${x+6}" y="16" font-size="11.5" font-weight="650" fill="#40536a">${MON[m.getMonth()]} ${m.getFullYear()}</text>`;gr+=`<line x1="${x}" x2="${x}" y1="0" y2="${H}" stroke="#e5eaf1"/>`}
+  if(UI.zoom!=='quarter'){const s0=dAt(abs(min));s0.setDate(s0.getDate()-((s0.getDay()+6)%7));
+    for(let w=new Date(s0);;w.setDate(w.getDate()+7)){const off=Math.round((w-TODAY)/864e5)-p.st;if(off>max)break;if(off<min)continue;const x=X(off);
+      hd+=`<text x="${x+3}" y="35" font-size="10" fill="#9aa9bb">${w.getDate()}${UI.zoom==='week'?' '+MON[w.getMonth()]:''}</text>`;gr+=`<line x1="${x}" x2="${x}" y1="0" y2="${H}" stroke="#f1f4f8"/>`}}
+  let bars='',deps='';
+  rows.forEach((r,i)=>{const y=i*RH,x=X(r.s),w=Math.max(r.d*ppd,3);
+    gr+=`<line x1="0" x2="${W}" y1="${y+RH}" y2="${y+RH}" stroke="#f1f4f8"/>`;
+    if(r.G){bars+=`<g data-act="colph" data-v="${r.id}" style="cursor:pointer"><rect x="${x}" y="${y+12}" width="${w}" height="8" rx="2" fill="#c3cedb"/><rect x="${x}" y="${y+12}" width="${w*r.p/100}" height="8" rx="2" fill="#40536a"/><path d="M${x} ${y+12}v13l5-5M${x+w} ${y+12}v13l-5-5" fill="#40536a"/><text x="${x+w+8}" y="${y+21}" font-size="11" font-weight="650" fill="#40536a">${r.p}%</text></g>`;return}
+    const cr=UI.crit&&r.crit,c1=cr?'#f5b9c1':'#a9d3fa',c2=cr?'#e06a7a':'#2196f3';
+    if(UI.base&&!r.ms)bars+=`<rect x="${X(r.bs)}" y="${y+25}" width="${Math.max(r.d*ppd,3)}" height="4" rx="2" fill="#c9d3df"/>`;
+    if(r.ms){const mx=x,my=y+RH/2-2;bars+=`<g data-act="task" data-v="${r.id}" style="cursor:pointer"><path d="M${mx} ${my-8}l8 8-8 8-8-8z" fill="${r.p>=100?'#1b9467':cr?'#cf4558':'#172636'}"/><text x="${mx+13}" y="${my+4}" font-size="11.5" font-weight="600" fill="#172636">${esc(r.n)} · ${fD(abs(r.s),0)}</text></g>`}
+    else bars+=`<g data-act="task" data-v="${r.id}" style="cursor:pointer"><rect x="${x}" y="${y+7}" width="${w}" height="16" rx="5" fill="${c1}"/><rect x="${x}" y="${y+7}" width="${w*r.p/100}" height="16" rx="5" fill="${c2}"/><text x="${x+w+7}" y="${y+19}" font-size="11" fill="#6f8196">${r.p}%${UI.zoom==='week'?' · '+esc(r.owner.split(' ')[0]):''}</text><title>${esc(r.n)}: ${fD(abs(r.s))} to ${fD(abs(r.s+r.d))}</title></g>`;
+    if(UI.dep)r.deps.forEach(dp=>{if(yi[dp]==null)return;const a=p.tasks.find(t=>t.id===dp),x1=X(a.s+a.d)+(a.ms?8:0),y1=yi[dp]*RH+(a.ms?RH/2-2:15),x2=x-(r.ms?8:0),y2=y+(r.ms?RH/2-2:15);
+      const cc=UI.crit&&a.crit&&r.crit?'#e06a7a':'#aebbcb';
+      deps+=`<path d="${x2>x1+10?`M${x1} ${y1}H${x1+6}V${y2}H${x2-1}`:`M${x1} ${y1}H${x1+6}V${y2-RH/2+2}H${x2-10}V${y2}H${x2-1}`}" fill="none" stroke="${cc}" stroke-width="1.2"/><path d="M${x2} ${y2}l-5-3v6z" fill="${cc}"/>`})});
+  const tx=X(-p.st);
+  const today=tx>=0&&tx<=W?`<line x1="${tx}" x2="${tx}" y1="0" y2="${H}" stroke="#2196f3" stroke-width="1.5"/>`:'';
+  const todayH=tx>=0&&tx<=W?`<rect x="${tx-19}" y="24" width="38" height="16" rx="8" fill="#2196f3"/><text x="${tx}" y="35.500" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">Today</text>`:'';
+  const wN=mob?150:230,cw=mob?[]:[['Owner',64],['Start',68],['Finish',68],['%',44]];
+  const left=`<div class="gl"><div class="gh"><div class="gc" style="width:${wN}px">Task</div>${cw.map(c=>`<div class="gc" style="width:${c[1]}px">${c[0]}</div>`).join('')}</div>${rows.map(r=>r.G?`<div class="gr ph0" data-act="colph" data-v="${r.id}"><div class="gc" style="width:${wN}px">${ic('cv',`width:12px;height:12px;vertical-align:-1px;margin-right:4px;transform:rotate(${UI.col[p.id+(+r.id[2]-1)]?0:90}deg)`)}${esc(r.n)}</div>${mob?'':`<div class="gc" style="width:64px"></div><div class="gc" style="width:68px">${fD(abs(r.s),0)}</div><div class="gc" style="width:68px">${fD(abs(r.s+r.d),0)}</div><div class="gc" style="width:44px">${r.p}</div>`}</div>`
+    :`<div class="gr" data-act="task" data-v="${r.id}"><div class="gc" style="width:${wN}px;padding-left:28px" title="${esc(r.n)}"><span class="mute" style="font-size:11px;margin-right:5px">${r.id.replace('M','◆')}</span>${esc(r.n)}</div>${mob?'':`<div class="gc" style="width:64px">${av(r.owner,22)}</div><div class="gc mute" style="width:68px">${fD(abs(r.s),0)}</div><div class="gc mute" style="width:68px">${fD(abs(r.s+r.d),0)}</div><div class="gc" style="width:44px">${r.p}</div>`}</div>`).join('')}</div>`;
+  const sx=Math.max(0,tx-(mob?60:260));
+  return `<div class="gw" id="gw" data-x="${Math.round(sx)}"><div class="gi">${left}<div class="gt"><div class="gh" style="padding:0"><svg width="${W}" height="${HH}" style="display:block">${hd}${todayH}</svg></div><svg width="${W}" height="${H}" role="img" aria-label="Gantt chart for ${esc(p.n)}">${gr}${deps}${bars}${today}</svg></div></div></div>`}
+function resLoad(p){
+  const wk=Array.from({length:8},(_,i)=>i),own=[...new Set(p.tasks.filter(t=>!t.ms).map(t=>t.owner))];
+  const rows=own.map(o=>({o,c:wk.map(w=>p.tasks.filter(t=>!t.ms&&t.owner===o&&t.p<100&&p.st+t.s<(w+1)*7&&p.st+t.s+t.d>w*7).length)})).filter(r=>r.c.some(Boolean));
+  const col=n=>n>=3?['#fbd3d9','#b9354a']:n===2?['#fde6b8','#8c5a0c']:n===1?['#d9ecfd','#1a66b3']:['#f5f7fa','#b3bfcd'];
+  return card('Resource load, next 8 weeks',rows.length?`<div class="tw"><table class="heat" style="border-collapse:separate"><thead><tr><th style="background:none">Owner</th>${wk.map(w=>`<th style="background:none;text-align:center">${fD(w*7,0)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr style="cursor:default"><td style="text-align:left;border:0"><span class="row" style="gap:7px">${av(r.o,22)}${esc(r.o)}</span></td>${r.c.map(n=>`<td style="background:${col(n)[0]};color:${col(n)[1]};font-weight:650">${n||'·'}</td>`).join('')}</tr>`).join('')}</tbody></table></div><div class="sm mute" style="margin-top:8px">Number of open tasks per person each week. Three or more signals overload.</div>`:'<div class="mute">No open work is scheduled in the next 8 weeks.</div>')}
+
+/* ============ projects: tasks ============ */
+function vTasks(){
+  const p=curP(),ts=p.tasks.filter(t=>!t.ms),ms=p.tasks.filter(t=>t.ms),K=['To do','In progress','In review','Done'];
+  const late=t=>t.p<100&&p.st+t.s+t.d<0;
+  const kc=K.map(s=>{const it=ts.filter(t=>tSt(t)===s);return `<div class="kc"><div class="row"><b>${s}</b><span class="mute sm">${it.length}</span></div>${it.map(t=>`<div class="kt" data-act="task" data-v="${t.id}"><div class="row" style="align-items:flex-start"><b style="flex:1;font-weight:600">${esc(t.n)}</b>${av(t.owner,22)}</div><div class="sm mute">${PHN[t.ph-1]}</div><div class="bar"><i style="width:${t.p}%;background:#2196f3"></i></div><div class="row sm"><span class="mute">Due ${fD(p.st+t.s+t.d,0)}</span><span class="sp"></span>${late(t)?pill('Overdue'):t.crit?'<span class="pill t-b">Critical path</span>':''}</div></div>`).join('')||'<div class="sm mute" style="padding:8px">No tasks</div>'}</div>`}).join('');
+  const list=`<div class="tw"><table><thead><tr><th>WBS</th><th>Task</th><th>Phase</th><th>Owner</th><th>Start</th><th>Finish</th><th class="num">Progress</th><th>Status</th></tr></thead><tbody>${ts.map(t=>`<tr data-act="task" data-v="${t.id}"><td class="mute">${t.id}</td><td>${esc(t.n)}</td><td class="mute">${PHN[t.ph-1]}</td><td><span class="row" style="gap:7px">${av(t.owner,22)}${esc(t.owner)}</span></td><td>${fD(p.st+t.s)}</td><td>${fD(p.st+t.s+t.d)}</td><td class="num">${t.p}%</td><td>${pill(late(t)?'Overdue':tSt(t))}</td></tr>`).join('')}</tbody></table></div>`;
+  const tl=ms.map(m=>{const dn=m.p>=100,sl=m.s-m.bs;return `<div class="li" style="cursor:pointer" data-act="task" data-v="${m.id}"><div class="dt" style="background:${dn?'var(--g-s)':'var(--soft)'}"><b>${dAt(p.st+m.s).getDate()}</b><span>${MON[dAt(p.st+m.s).getMonth()]}</span></div><div style="flex:1"><b>${esc(m.n)}</b><div class="sm mute">Baseline ${fD(p.st+m.bs)}${sl>0?` · forecast ${sl} days later`:''}</div></div>${pill(dn?'Achieved':sl>0?'At risk':'On track')}</div>`}).join('');
+  return head(MODS[0],'Tasks & Milestones',PG['pj-tasks'].d,`<button class="btn pri" data-act="newtask">${ic('plus','width:16px;height:16px')}Add task</button>`)+
+  `<div class="kpis">${[['Tasks',ts.length,''],...K.map(s=>[s,ts.filter(t=>tSt(t)===s).length,'']),['Overdue',ts.filter(late).length,'r']].map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b style="${x[2]&&x[1]?'color:var(--r)':''}">${x[1]}</b></div>`).join('')}</div>
+  <div class="card pad" style="display:grid;gap:14px"><div class="row wrap">${projBar()}<span class="sp"></span>${seg('tview',[['board','Board'],['list','List']])}</div>${UI.tview==='board'?`<div class="kb">${kc}</div>`:list}</div>
+  ${card('Milestones',tl)}`}
+
+/* ============ projects: budget ============ */
+const HEADS=[['Engineering & design',.09],['Equipment & materials',.46],['Civil & structural',.14],['Mechanical & piping',.13],['Electrical & instrumentation',.11],['Contingency',.07]];
+function vBudget(){
+  const p=curP(),bud=p.bud,act=pAct(p),com=pCom(p),eac=pEAC(p),v=+(bud-eac).toFixed(1),r=rng(hash(p.id+'b'));
+  const dur=pBEnd(p),nm=Math.max(4,Math.ceil(dur/30)),el=-p.st,sm=t=>t<=0?0:t>=1?1:t*t*(3-2*t);
+  const lab=Array.from({length:nm+1},(_,i)=>{const d=dAt(p.st+i*30);return MON[d.getMonth()]+" '"+String(d.getFullYear()).slice(2)});
+  const plan=lab.map((_,i)=>+(bud*sm(i/nm)).toFixed(1)),nowI=Math.min(nm,Math.max(0,el/30));
+  const actS=lab.map((_,i)=>i<=nowI?+(act*sm(i/nm)/Math.max(.001,sm(nowI/nm))).toFixed(1):null);
+  const fc=lab.map((_,i)=>i<Math.floor(nowI)?null:+(act+(eac-act)*((sm(i/nm)-sm(nowI/nm))/Math.max(.001,1-sm(nowI/nm)))).toFixed(1));
+  const hs=HEADS.map(([n,f])=>{const b=bud*f,a=n==='Contingency'?b*.1*pProg(p)/100:b*pProg(p)/100/pCPI(p)*(.85+r()*.3),c=Math.min(b*1.05,a+b*.15);return{n,b,a,c,f:n==='Contingency'?b*.6:b/pCPI(p)*(.9+r()*.2)}});
+  return head(MODS[0],'Budget & Cost',PG['pj-budget'].d)+
+  `<div class="kpis">${[['Sanctioned budget','₹ '+bud+' Cr','AFE '+p.code],['Committed','₹ '+com+' Cr',Math.round(com/bud*100)+'% of budget'],['Actual cost','₹ '+act+' Cr',Math.round(act/bud*100)+'% of budget'],['Forecast at completion','₹ '+eac+' Cr','CPI '+pCPI(p)],['Variance',(v<0?'− ₹ ':'₹ ')+Math.abs(v)+' Cr',v<0?'Over budget':'Under budget',v<0?'dn':'up']].map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b style="${x[3]==='dn'?'color:var(--r)':''}">${x[1]}</b><small class="${x[3]||''}">${x[2]}</small></div>`).join('')}</div>
+  <div class="card pad" style="display:grid;gap:14px">${projBar()}<h3>Cumulative cost curve (₹ Cr)</h3>${line(lab,[{n:'Planned (baseline)',c:'#b3c0cf',p:plan},{n:'Actual',c:'#2196f3',p:actS,area:1},{n:'Forecast',c:'#e7a93c',p:fc,dash:1}],{h:240,now:nowI,aria:'Cumulative cost curve'})}</div>
+  <div class="card"><div class="pad" style="padding-bottom:6px"><h3>Cost by head</h3></div><div class="tw"><table><thead><tr><th>Cost head</th><th class="num">Budget</th><th class="num">Committed</th><th class="num">Actual</th><th class="num">Forecast</th><th class="num">Variance</th><th style="min-width:160px">Utilisation</th></tr></thead><tbody>${hs.map(h=>{const vv=h.b-h.f;return `<tr style="cursor:default"><td><b>${h.n}</b></td><td class="num">${h.b.toFixed(2)}</td><td class="num">${h.c.toFixed(2)}</td><td class="num">${h.a.toFixed(2)}</td><td class="num">${h.f.toFixed(2)}</td><td class="num" style="color:${vv<0?'var(--r)':'var(--g)'};font-weight:600">${vv<0?'−':'+'}${Math.abs(vv).toFixed(2)}</td><td><div class="bar" style="height:9px"><i style="width:${Math.min(100,h.a/h.b*100)}%;background:#2196f3"></i><i style="width:${Math.max(0,Math.min(100-h.a/h.b*100,(h.c-h.a)/h.b*100))}%;background:#a9d3fa"></i></div></td></tr>`}).join('')}</tbody></table></div><div class="pad sm mute" style="padding-top:10px">All figures in ₹ Cr. Dark bar shows actual cost, light bar shows open commitments.</div></div>
+  ${card('Budget against actual, all projects (₹ Cr)',cols(PROJ.map(x=>x.code),[{n:'Budget',c:'#cfe3f8',p:PROJ.map(x=>x.bud)},{n:'Actual',c:'#2196f3',p:PROJ.map(pAct)},{n:'Forecast',c:'#e7a93c',p:PROJ.map(pEAC)}]))}`}
+
+/* ============ projects: capex ============ */
+const GATES=['Idea','Feasibility','Sanction','Execution','Capitalised'];
+const CAPEX=[['CAP-301','Boiler #3 Efficiency Upgrade','Energy',18.4,22,3.4,3],['CAP-302','ETP Capacity Expansion','Environment',32,0,0,3],['CAP-303','DCS Migration – Unit 2','Automation',12.6,17,4.1,3],['CAP-304','Warehouse Automation – Phase 1','Logistics',9.8,19,3.8,3],['CAP-305','Rooftop Solar 2 MWp','Sustainability',8.2,24,3.1,4],
+['CAP-306','Waste heat recovery from flue gas','Energy',14.5,27,2.9,2],['CAP-307','Fire hydrant ring main replacement','Safety',6.4,0,0,2],['CAP-308','Debottlenecking of packing line','Capacity',11.2,31,2.6,1],['CAP-309','Zero liquid discharge – RO stage','Environment',26,12,5.8,1],['CAP-310','Electric forklift fleet','Sustainability',3.6,16,4.4,0],['CAP-311','Online condition monitoring – critical rotating equipment','Reliability',4.9,35,2.2,1]];
+function vCapex(){
+  const by=GATES.map((g,i)=>({l:g,v:CAPEX.filter(c=>c[6]===i).length,a:CAPEX.filter(c=>c[6]===i).reduce((a,c)=>a+c[3],0)}));
+  const tot=CAPEX.reduce((a,c)=>a+c[3],0);
+  return head(MODS[0],'Capex Tracking',PG['pj-capex'].d,`<a class="btn" href="https://www.clappia.com" target="_blank" rel="noopener">${ic('ext','width:15px;height:15px')}Customise this workflow</a>`)+
+  `<div class="kpis">${[['Proposals',CAPEX.length,'FY 2026-27 plan'],['Total capex','₹ '+tot.toFixed(1)+' Cr','across all stages'],['Sanctioned','₹ '+CAPEX.filter(c=>c[6]>=3).reduce((a,c)=>a+c[3],0).toFixed(1)+' Cr','in execution or capitalised'],['In pipeline','₹ '+CAPEX.filter(c=>c[6]<3).reduce((a,c)=>a+c[3],0).toFixed(1)+' Cr','awaiting sanction'],['Average IRR',Math.round(CAPEX.filter(c=>c[4]).reduce((a,c)=>a+c[4],0)/CAPEX.filter(c=>c[4]).length)+'%','on return-based proposals']].map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>
+  ${card('Stage-gate pipeline',`<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">${by.map((b,i)=>`<div style="border-radius:10px;padding:12px;background:rgba(33,150,243,${.06+i*.045})"><div class="lbl" style="color:var(--ink2)">Gate ${i+1}</div><b style="font-size:15px">${b.l}</b><div style="font-size:22px;font-weight:700;margin-top:4px">${b.v}</div><div class="sm mute">₹ ${b.a.toFixed(1)} Cr</div></div>`).join('')}</div>`)}
+  <div class="card"><div class="tw"><table><thead><tr><th>ID</th><th>Proposal</th><th>Category</th><th class="num">Amount (₹ Cr)</th><th class="num">IRR</th><th class="num">Payback (yr)</th><th>Sponsor</th><th style="min-width:150px">Stage gate</th><th>Stage</th></tr></thead><tbody>${CAPEX.map((c,i)=>`<tr style="cursor:default"><td class="mute">${c[0]}</td><td><b>${esc(c[1])}</b></td><td>${c[2]}</td><td class="num">${c[3].toFixed(1)}</td><td class="num">${c[4]?c[4]+'%':'Statutory'}</td><td class="num">${c[5]||'–'}</td><td><span class="row" style="gap:7px">${av(PEOPLE[i%10],22)}${PEOPLE[i%10]}</span></td><td><div class="gate">${GATES.map((_,g)=>`<i class="${g<=c[6]?'on':''}"></i>`).join('')}</div></td><td>${pill(c[6]===4?'Capitalised':c[6]===3?'In progress – execution':c[6]===2?'Pending sanction':GATES[c[6]])}</td></tr>`).join('')}</tbody></table></div></div>`}
+
+/* ============ projects: dashboards ============ */
+function vDash(){
+  const RISK=[['Vendor delay on long-lead equipment',4,4,'P3'],['Statutory clearance for stack height',2,5,'P1'],['Monsoon impact on civil works',3,3,'P2'],['Shutdown window not confirmed',3,4,'P6'],['Scope creep in automation',2,3,'P4'],['Price escalation in steel',4,2,'P2']];
+  const cellC=(l,i)=>{const s=l*i;return s>=15?['#fbd3d9','#b9354a']:s>=8?['#fde6b8','#8c5a0c']:['#dff3ea','#157a54']};
+  let rk='<div class="rk"><span></span>'+[1,2,3,4,5].map(i=>`<span class="mute" style="text-align:center">${i}</span>`).join('');
+  for(let l=5;l>=1;l--){rk+=`<span class="mute" style="align-self:center;padding-right:4px">${l}</span>`;for(let i=1;i<=5;i++){const n=RISK.filter(r=>r[1]===l&&r[2]===i).length,c=cellC(l,i);rk+=`<div style="background:${c[0]};color:${c[1]}">${n||''}</div>`}}rk+='</div>';
+  const ups=PROJ.flatMap(p=>p.tasks.filter(t=>t.ms&&t.p<100).map(t=>({p,t,d:p.st+t.s}))).sort((a,b)=>a.d-b.d).slice(0,6);
+  const tl=Array.from({length:10},(_,i)=>fD(-63+i*7,0)),r=rng(7);
+  const pmin=Math.min(...PROJ.map(p=>p.st)),pmax=Math.max(...PROJ.map(p=>p.st+pEnd(p))),span=pmax-pmin;
+  const port=PROJ.map(p=>{const a=(p.st-pmin)/span*100,w=pEnd(p)/span*100,rg=pRag(p);return `<div style="display:grid;grid-template-columns:minmax(90px,200px) 1fr;gap:10px;align-items:center;padding:5px 0;cursor:pointer" data-act="openproj" data-v="${p.id}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">${esc(p.n)}</span><div style="position:relative;height:16px;background:var(--soft);border-radius:8px"><div style="position:absolute;left:${a}%;width:${w}%;top:0;bottom:0;border-radius:8px;background:${TC[tone(rg)]}55"><div style="width:${pProg(p)}%;height:100%;border-radius:8px;background:${TC[tone(rg)]}"></div></div><div style="position:absolute;left:${-pmin/span*100}%;top:-4px;bottom:-4px;width:2px;background:#2196f3"></div></div></div>`}).join('');
+  return head(MODS[0],'Dashboards',PG['pj-dash'].d)+
+  `<div class="kpis">${[['Portfolio value','₹ '+PROJ.reduce((a,p)=>a+p.bud,0).toFixed(1)+' Cr',PROJ.length+' active projects'],['Overall progress',Math.round(PROJ.reduce((a,p)=>a+pProg(p)*p.bud,0)/PROJ.reduce((a,p)=>a+p.bud,0))+'%','weighted by budget'],['Portfolio SPI',(PROJ.reduce((a,p)=>a+pSPI(p),0)/PROJ.length).toFixed(2),'schedule performance'],['Portfolio CPI',(PROJ.reduce((a,p)=>a+pCPI(p),0)/PROJ.length).toFixed(2),'cost performance'],['Open risks',RISK.length,RISK.filter(x=>x[1]*x[2]>=15).length+' high']].map(x=>`<div class="card kpi"><span class="lbl">${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('')}</div>
+  ${card('Portfolio timeline',port+`<div class="sm mute" style="margin-top:8px">${fD(pmin)} to ${fD(pmax)}. The blue line marks today.</div>`)}
+  <div class="card"><div class="pad" style="padding-bottom:6px"><h3>Project health</h3></div><div class="tw"><table><thead><tr><th>Project</th><th>Manager</th><th style="min-width:130px">Progress</th><th class="num">Plan</th><th class="num">SPI</th><th class="num">CPI</th><th class="num">Budget (₹ Cr)</th><th>Forecast finish</th><th>Health</th></tr></thead><tbody>${PROJ.map(p=>`<tr data-act="openproj" data-v="${p.id}"><td><b>${esc(p.n)}</b><div class="sm mute">${p.code} · ${p.cat}</div></td><td><span class="row" style="gap:7px">${av(p.mgr,22)}${esc(p.mgr)}</span></td><td><div class="row"><div class="bar" style="flex:1"><i style="width:${pProg(p)}%;background:#2196f3"></i></div><b class="sm">${pProg(p)}%</b></div></td><td class="num">${pPlan(p)}%</td><td class="num" style="color:${pSPI(p)<.9?'var(--r)':'inherit'}">${pSPI(p)}</td><td class="num" style="color:${pCPI(p)<.9?'var(--r)':'inherit'}">${pCPI(p)}</td><td class="num">${p.bud.toFixed(1)}</td><td>${fD(p.st+pEnd(p))}</td><td>${pill(pRag(p))}</td></tr>`).join('')}</tbody></table></div></div>
+  <div class="grid c2">${card('Schedule and cost performance',cols(PROJ.map(p=>p.code),[{n:'SPI',c:'#2196f3',p:PROJ.map(pSPI)},{n:'CPI',c:'#35b889',p:PROJ.map(pCPI)}],{aria:'SPI and CPI by project'})+'<div class="sm mute">A value of 1.0 means on plan. Below 0.9 needs intervention.</div>')}
+   ${card('Tasks completed per week',line(tl,[{n:'Planned',c:'#b3c0cf',p:tl.map((_,i)=>9+i%3)},{n:'Completed',c:'#2196f3',area:1,p:tl.map((_,i)=>Math.round(7+r()*5))}],{min:0}))}</div>
+  <div class="grid c2">${card('Upcoming milestones',ups.map(u=>`<div class="li" style="cursor:pointer;padding:9px 0" data-act="openproj" data-v="${u.p.id}"><div class="dt"><b>${dAt(u.d).getDate()}</b><span>${MON[dAt(u.d).getMonth()]}</span></div><div style="flex:1;min-width:0"><b>${esc(u.t.n)}</b><div class="sm mute">${esc(u.p.n)}</div></div>${pill(u.d<0?'Overdue':u.t.s>u.t.bs?'At risk':'On track')}</div>`).join(''))}
+   ${card('Risk matrix',`<div class="row wrap" style="align-items:flex-start;gap:18px"><div style="width:min(100%,230px)">${rk}<div class="sm mute" style="text-align:center;margin-top:6px">Impact → (likelihood ↑)</div></div><div style="flex:1;min-width:200px">${RISK.sort((a,b)=>b[1]*b[2]-a[1]*a[2]).map(x=>`<div class="row sm" style="padding:5px 0;border-top:1px solid var(--line2)"><span style="flex:1">${esc(x[0])}</span><span class="mute">${PROJ.find(p=>p.id===x[3]).code}</span><span class="pill t-${x[1]*x[2]>=15?'r':x[1]*x[2]>=8?'a':'g'}">${x[1]*x[2]}</span></div>`).join('')}</div></div>`)}</div>`}
+
+/* ============ inbox / chat / settings ============ */
+function vInbox(){const m=MAILS[UI.mail]||MAILS[0];
+  return `<div class="ph"><span class="mi" style="background:var(--acc-s);color:var(--acc)">${ic('inbox')}</span><div style="flex:1"><h1>Inbox</h1><p>Approvals, reviews and updates from across your plant.</p></div><button class="btn pri" data-act="compose">${ic('plus','width:16px;height:16px')}New message</button></div>
+  <div class="card mail"><div class="ml">${MAILS.map((x,i)=>`<div class="mrow ${i===UI.mail?'on':''} ${x.un?'un':''}" data-act="mail" data-v="${i}"><div class="row"><b style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.un?'<span style="color:var(--acc)">● </span>':''}${esc(x.f)}</b><span class="sm mute">${x.m}</span></div><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.s)}</div><div class="sm mute" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.b.split('\n').find(l=>l.length>20)||'')}</div></div>`).join('')}</div>
+  <div class="pad" style="display:grid;gap:14px;align-content:start"><h2>${esc(m.s)}</h2><div class="row">${av(m.f,34)}<div><b>${esc(m.f)}</b><div class="sm mute">to you · ${m.m}</div></div></div><div style="white-space:pre-wrap;color:var(--ink2);max-width:68ch">${esc(m.b)}</div><div class="row wrap">${m.g?`<button class="btn soft" data-go="${m.g}">${esc(m.gl)} →</button>`:''}<button class="btn" data-act="compose" data-v="${esc(m.f)}">Reply</button></div></div></div>`}
+function vChat(){const c=CHATS[UI.chat],me=role().n;
+  const li=(k,x)=>`<button class="ni ${UI.chat===k?'on':''}" data-act="chat" data-v="${esc(k)}">${x.g?'':av(k,22)}<span>${esc(x.n)}</span></button>`;
+  return `<div class="ph"><span class="mi" style="background:var(--acc-s);color:var(--acc)">${ic('chat')}</span><div><h1>Chat</h1><p>Channels and direct messages with your plant teams.</p></div></div>
+  <div class="card chat"><div class="cl"><div class="lbl nl">Channels</div>${Object.entries(CHATS).filter(e=>e[1].g).map(e=>li(...e)).join('')}<div class="lbl nl">Direct messages</div>${Object.entries(CHATS).filter(e=>!e[1].g).map(e=>li(...e)).join('')}</div>
+  <div class="cm"><div class="row" style="padding:12px 16px;border-bottom:1px solid var(--line)"><b>${esc(c.n)}</b><span class="sm mute">${c.g?'Channel · 24 members':'Active now'}</span></div><div class="msgs" id="msgs">${c.ms.map(x=>`<div class="msg ${x.w===me||x.me?'me':''}">${x.me||x.w===me?'':av(x.w)}<div class="bub">${x.me?'':`<small>${esc(x.w)} · ${x.m}</small>`}${esc(x.t)}</div></div>`).join('')}</div>
+  <form class="send" id="sendf"><input id="chin" placeholder="Message ${esc(c.n)}" autocomplete="off"><button class="btn pri">Send</button></form></div></div>`}
+function vSettings(){
+  const f=(k,l,v,ph='')=>`<div class="fld"><label>${l}</label><input data-conn="${k}" value="${esc(v||'')}" placeholder="${ph}"></div>`;
+  return `<div class="ph"><span class="mi" style="background:var(--acc-s);color:var(--acc)">${ic('gear')}</span><div><h1>Data connection</h1><p>Link each system to a Clappia app so new records are saved as submissions in your workplace.</p></div></div>
+  <div class="card pad" style="display:grid;gap:14px"><div class="row wrap"><h3>Clappia workplace</h3>${pill(CONN.key?'Ready':'Sample data – not connected')}</div>
+   <div class="f2">${f('wp','Workplace ID',CONN.wp)}${f('email','Requesting user email',CONN.email,'name@company.com')}${f('key','API key',CONN.key,'Paste your Clappia API key')}</div>
+   <div class="lbl">App ID for each system</div><div class="f2">${MODS.map(m=>f('app:'+m.id,m.n,CONN.apps[m.id],'e.g. '+m.id.slice(0,3).toUpperCase()+'123456')).join('')}${f('app:leads','Contact requests',CONN.apps.leads,'e.g. LEA123456')}</div>
+   <div class="row wrap"><button class="btn pri" data-act="saveconn">Save connection</button><span class="sm mute">Until an app ID is set, the system runs on built-in sample data. Live sync needs the downloaded file; a hosted preview cannot call the Clappia API.</span></div></div>
+  <div class="card"><div class="tb"><h3>Contact requests</h3><span class="pill t-b">${LEADS.length}</span><span class="sp"></span>${LEADS.length?'<button class="btn sm" data-act="copyleads">Copy as CSV</button>':''}</div><div class="tw"><table><thead><tr><th>Name</th><th>Role</th><th>Number</th><th>Email</th><th>Company selected</th><th>Received</th></tr></thead><tbody>${LEADS.map(l=>`<tr style="cursor:default"><td><b>${esc(l.name)}</b></td><td>${esc(l.role)}</td><td>${esc(l.num)}</td><td>${esc(l.email||'–')}</td><td>${esc(l.co||'–')}</td><td class="mute">${esc(l.at)}</td></tr>`).join('')||'<tr style="cursor:default"><td colspan="6" class="mute" style="text-align:center;padding:24px">Requests sent from the Contact us form on this device appear here.</td></tr>'}</tbody></table></div></div>`}
+
+/* ============ clappia ============ */
+async function clappia(appKey,data){
+  const appId=CONN.apps[appKey];if(!CONN.key||!appId)return false;
+  const d={};Object.entries(data).filter(e=>e[1]!==undefined).forEach(([k,v])=>d[k.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')]=String(v===''||v==null?'-':v));
+  try{const r=await fetch('https://api-public-v4.clappia.com/submissions/create',{method:'POST',headers:{'x-api-key':CONN.key,'Content-Type':'application/json'},body:JSON.stringify({workplaceId:CONN.wp,appId,requestingUserEmailAddress:CONN.email,data:d})});
+    if(!r.ok)throw 0;toast('Saved to Clappia');return true}catch(e){toast('Saved here. Clappia could not be reached.');return false}}
+
+/* ============ overlays ============ */
+const closeOv=()=>$('#ovr').innerHTML='';
+function modal(title,body,foot,dr){$('#ovr').innerHTML=`<div class="ov ${dr?'dr':''}" data-act="ovbg"><div class="modal" role="dialog" aria-label="${esc(title)}"><div class="mh"><h3 style="flex:1">${esc(title)}</h3><button class="ib" data-act="close" aria-label="Close" style="border:0">${ic('x')}</button></div>${body}${foot?`<div class="mf">${foot}</div>`:''}</div></div>`}
+function contactForm(){
+  modal('Contact us',`<form id="cf" novalidate><div class="mb"><p class="mute" style="margin:0">Tell us who you are and our team will call you back to plan this for your plant.</p>
+   <div class="fld"><label>Name <i>*</i></label><input name="name" autocomplete="name"><span class="err" data-e="name"></span></div>
+   <div class="fld"><label>Role <i>*</i></label><input name="role" placeholder="e.g. Plant Head, Maintenance Manager" autocomplete="organization-title"><span class="err" data-e="role"></span></div>
+   <div class="fld"><label>Phone number <i>*</i></label><input name="num" inputmode="tel" autocomplete="tel" placeholder="+91 98765 43210"><span class="err" data-e="num"></span></div>
+   <div class="fld"><label>Email <span class="mute" style="font-weight:400">(optional)</span></label><input name="email" type="email" autocomplete="email"><span class="err" data-e="email"></span></div></div>
+   <div class="mf"><button type="button" class="btn" data-act="close">Cancel</button><button class="btn pri">Send request</button></div></form>`)}
+function rowDrawer(pid,rid){const p=PG[pid],r=DATA[pid].find(x=>x.id===rid);if(!r)return;const sc=stCol(p),opts=p.cols[p.cols.length-1][2];
+  modal(r.id+' · '+p.n,`<div class="mb"><div><h2>${esc(r[p.cols[0][0]])}</h2><div style="margin-top:8px">${pill(r[sc])}</div></div>
+   <div class="kv">${p.cols.slice(0,-1).map(c=>`<span>${esc(c[0])}</span><b style="font-weight:550">${cell(c,r[c[0]])}</b>`).join('')}</div>
+   <div class="fld"><label>Update status</label><select id="rst">${[...new Set(opts)].map(o=>`<option ${o===r[sc]?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
+   <div class="fld"><label>Comment</label><textarea id="rcm" rows="3" placeholder="Add a note for your team"></textarea></div>
+   <div><div class="lbl" style="margin-bottom:8px">Activity</div>${[['created this record',3],['assigned an owner',2],['added a comment',1]].map((a,i)=>`<div class="row sm" style="padding:6px 0">${av(PEOPLE[(hash(r.id)+i)%10],22)}<span><b>${PEOPLE[(hash(r.id)+i)%10]}</b> ${a[0]}</span><span class="sp"></span><span class="mute">${a[1]} d ago</span></div>`).join('')}</div></div>`,
+   `<button class="btn" data-act="close">Close</button><button class="btn pri" data-act="saverow" data-v="${pid}|${rid}">Save changes</button>`,1)}
+function newForm(pid){const p=PG[pid],I=ind();
+  const inp=c=>{const [l,t,a]=c,n=`name="${esc(l)}"`;
+    if(t==='e'||t==='u'||t==='p'||t==='c'||t==='s'||t==='o'){const o=t==='e'?I.e:t==='u'?I.u:t==='p'?PEOPLE:t==='c'?CONTR:[...new Set(a)];return `<select ${n}>${o.map(x=>`<option>${esc(x)}</option>`).join('')}</select>`}
+    if(t==='d')return `<input type="date" ${n} value="${dAt(1).toISOString().slice(0,10)}">`;
+    if(t==='n')return `<input type="number" step="any" ${n} value="${a[0]}">`;
+    return `<input ${n} placeholder="${esc(a[0])}">`};
+  modal('New record · '+p.n,`<form id="nf" data-p="${pid}"><div class="mb"><div class="f2">${p.cols.map((c,i)=>`<div class="fld" style="${i===0?'grid-column:1/-1':''}"><label>${esc(c[0])}${i===0?' <i>*</i>':''}</label>${inp(c)}</div>`).join('')}</div><span class="err" id="nfe"></span></div><div class="mf"><button type="button" class="btn" data-act="close">Cancel</button><button class="btn pri">Create record</button></div></form>`)}
+function taskDrawer(tid){const p=curP(),t=p.tasks.find(x=>x.id===tid);if(!t)return;
+  const iso=o=>{const d=dAt(o);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  modal((t.ms?'Milestone ':'Task ')+t.id,`<div class="mb"><div><h2>${esc(t.n)}</h2><div class="sm mute" style="margin-top:3px">${esc(p.n)} · ${PHN[t.ph-1]}</div><div class="row wrap" style="margin-top:8px">${pill(t.ms?(t.p>=100?'Achieved':'Pending'):tSt(t))}${t.crit?'<span class="pill t-r">Critical path</span>':''}</div></div>
+   <div class="kv"><span>Baseline</span><b style="font-weight:550">${fD(p.st+t.bs)} to ${fD(p.st+t.bs+t.d)}</b><span>Slip</span><b style="font-weight:550;color:${t.s>t.bs?'var(--r)':'var(--g)'}">${t.s>t.bs?(t.s-t.bs)+' days late':'None'}</b><span>Depends on</span><b style="font-weight:550">${t.deps.map(d=>esc(p.tasks.find(x=>x.id===d).n)).join(', ')||'None'}</b></div>
+   <div class="f2"><div class="fld"><label>Start date</label><input type="date" id="ts" value="${iso(p.st+t.s)}"></div>${t.ms?'':`<div class="fld"><label>Duration (days)</label><input type="number" min="1" id="td" value="${t.d}"></div>`}</div>
+   <div class="fld"><label>Owner</label><select id="to">${PEOPLE.map(x=>`<option ${x===t.owner?'selected':''}>${x}</option>`).join('')}</select></div>
+   <div class="fld"><label>Progress: <b id="tpv">${t.p}%</b></label><input type="range" id="tp" min="0" max="100" step="${t.ms?100:5}" value="${t.p}" style="padding:0;border:0"></div></div>`,
+   `<button class="btn" data-act="close">Cancel</button><button class="btn pri" data-act="savetask" data-v="${t.id}">Save task</button>`,1)}
+function newTask(){const p=curP();
+  modal('Add task · '+p.code,`<form id="tf2"><div class="mb"><div class="fld"><label>Task name <i>*</i></label><input name="n" placeholder="e.g. Insulation and cladding"></div><div class="f2"><div class="fld"><label>Phase</label><select name="ph">${PHN.map((x,i)=>`<option value="${i+1}">${x}</option>`).join('')}</select></div><div class="fld"><label>Owner</label><select name="o">${PEOPLE.map(x=>`<option>${x}</option>`).join('')}</select></div><div class="fld"><label>Start date</label><input type="date" name="s" value="${dAt(3).toISOString().slice(0,10)}"></div><div class="fld"><label>Duration (days)</label><input type="number" name="d" min="1" value="10"></div></div><span class="err" id="tfe"></span></div><div class="mf"><button type="button" class="btn" data-act="close">Cancel</button><button class="btn pri">Add to schedule</button></div></form>`)}
+
+/* ============ login ============ */
+function vLogin(){
+  const I=IND.find(i=>i.k===L.ind);
+  const rb=r=>`<button class="role ${L.role===r.id?'on':''}" data-act="lrole" data-v="${r.id}">${av(r.n,36)}<span><b>${r.t}</b><span>${r.d}</span></span></button>`;
+  const s1=`<div><h2 style="font-size:22px">Choose your role</h2><p class="mute" style="margin:4px 0 0">Pick a sample role to see the platform through their eyes. Field roles fill in checklists; managers review them on dashboards.</p></div><div class="lbl">Management</div><div class="roles">${ROLES.filter(r=>!r.f).map(rb).join('')}</div><div class="lbl">Field team</div><div class="roles">${ROLES.filter(r=>r.f).map(rb).join('')}</div>`;
+  const s2=`<div><h2 style="font-size:22px">Choose your industry</h2><p class="mute" style="margin:4px 0 0">Units, equipment, sample data and checklists adapt to your industry.</p></div><div class="chips">${IND.map(i=>`<button class="chip ${L.ind===i.k?'on':''}" data-act="lind" data-v="${i.k}">${i.n}</button>`).join('')}</div><div class="card pad" style="background:var(--panel)"><b>${PLANT[L.ind]}</b><div class="sm mute" style="margin-top:3px">Units: ${I.u.join(', ')}</div><div class="sm mute">Checklists include: ${ICL[L.ind].map(c=>c[1]).join(', ')}</div></div>
+   <div class="row wrap"><button class="btn" data-act="lback">Back</button><button class="btn pri" data-act="lenter">Enter workspace →</button></div>`;
+  $('#app').innerHTML=`<div class="login"><div class="l-art"><div class="brand"><img class="blogo" src="${LOGO}" alt="Clappia"><span class="bsub">Plant Suite</span></div>
+   <div style="display:grid;gap:14px"><h1>Run your whole plant from one place.</h1><p>Projects, maintenance, safety, quality and operations on a single connected platform, with your teams working together inside it.</p></div>
+   <svg viewBox="0 0 420 150" style="width:100%;max-width:440px;background:#fff;border-radius:14px;box-shadow:var(--sh)" aria-hidden="true"><g font-size="9" fill="#9aa9bb"><text x="16" y="22">Engineering</text><text x="16" y="48">Procurement</text><text x="16" y="74">Construction</text><text x="16" y="100">Commissioning</text></g><g><rect x="96" y="13" width="110" height="12" rx="4" fill="#a9d3fa"/><rect x="96" y="13" width="110" height="12" rx="4" fill="#2196f3"/><rect x="150" y="39" width="130" height="12" rx="4" fill="#a9d3fa"/><rect x="150" y="39" width="84" height="12" rx="4" fill="#2196f3"/><rect x="230" y="65" width="120" height="12" rx="4" fill="#c5ebdc"/><rect x="230" y="65" width="30" height="12" rx="4" fill="#35b889"/><rect x="330" y="91" width="70" height="12" rx="4" fill="#fde6b8"/></g><path d="M206 19h10v26h-66M280 45h10v26h-60M350 71h8v26h-28" fill="none" stroke="#aebbcb"/><line x1="252" x2="252" y1="6" y2="112" stroke="#2196f3" stroke-dasharray="3 3"/><path d="M404 120l6 6-6 6-6-6z" fill="#172636"/><text x="16" y="131" font-size="9" fill="#9aa9bb">Milestone: commercial operation</text></svg>
+   <div class="l-list">${['Detailed project planning with Gantt, budgets and capex','Preventive and predictive maintenance, permits and audits','Inbox, chat and notifications for every team'].map(x=>`<div><i>✓</i>${x}</div>`).join('')}</div></div>
+   <div class="l-form"><div class="row" style="width:100%;max-width:640px"><div class="steps"><span class="${L.step===1?'on':''}"><b>1</b> Role</span><span>—</span><span class="${L.step===2?'on':''}"><b>2</b> Industry</span></div><span class="sp"></span><button class="btn pri sm" data-act="contact">${ic('phone','width:15px;height:15px')}Contact us</button></div>
+   <div class="l-in">${L.step===1?s1:s2}</div></div></div>`}
+
+/* ============ actions ============ */
+const ACT={
+ contact:contactForm,close:closeOv,ovbg:(v,t,e)=>{if(e.target===t)closeOv()},
+ menu:()=>$('#side').classList.toggle('open'),
+ logout:()=>{closeOv();L={step:1,role:S.role,ind:S.ind,co:S.co};S.role=null;store.set('s',S);vLogin()},
+ lrole:v=>{L.role=v;L.step=2;vLogin()},lind:v=>{L.ind=v;vLogin()},lco:v=>{L.co=v;vLogin()},lback:()=>{L.step=1;vLogin()},
+ lenter:()=>{S={role:L.role,ind:L.ind,co:PLANT[L.ind]};store.set('s',S);build();UI.page='home';UI.open=role().home==='home'?'projects':role().home;shell()},
+ mod:v=>{if(UI.open===v&&UI.page===v){UI.open=null;sysNav()}else{UI.open=v;go(v)}},
+ bell:()=>{const n=$('#npop');if(n.innerHTML){n.innerHTML='';return}
+   n.innerHTML=`<div class="pop npop"><div class="row" style="padding:12px 14px"><b style="flex:1">Notifications</b><button class="btn ghost sm" data-act="readall">Mark all read</button></div>${NOTIF.map((x,i)=>`<div class="nrow ${x.un?'un':''}" data-act="notif" data-v="${i}"><span style="width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none;background:${x.un?'var(--acc)':'transparent'}"></span><div><b>${esc(x.t)}</b><div class="sm mute">${esc(x.d)}</div><div class="sm" style="color:var(--faint)">${x.m}</div></div></div>`).join('')}</div>`},
+ readall:()=>{NOTIF.forEach(n=>n.un=0);$('#npop').innerHTML='';$('#bell .dot').textContent='0'},
+ notif:v=>{const n=NOTIF[v];n.un=0;$('#npop').innerHTML='';$('#bell .dot').textContent=unN();go(n.g)},
+ filt:v=>{UI.f=v;$('#tbl').innerHTML=tbl(PG[UI.page]);document.querySelectorAll('#tf button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))},
+ row:v=>{const [p,r]=v.split('|');rowDrawer(p,r)},
+ fill:v=>fillForm(v),sub:v=>subDrawer(v),
+ allok:()=>document.querySelectorAll('#clf input[value="OK"]').forEach(i=>i.checked=true),
+ subwo:v=>{const x=allSubs().find(s=>s.id===v),p=PG['mt-wo'],r={id:'WO-'+String(1041+DATA['mt-wo'].length).padStart(4,'0'),Description:'Rectify: '+x.res.filter(q=>q.a==='Not OK').map(q=>q.q).join('; ').slice(0,90),Equipment:ind().e[0],Type:'Corrective',Priority:'High','Assigned to':'Arjun Deshmukh',Due:2,Status:'Open'};DATA['mt-wo'].unshift(r);closeOv();toast('Work order '+r.id+' raised');notify(r.id+' raised from checklist',x.n,'mt-wo');render()},
+ saverow:v=>{const [pid,rid]=v.split('|'),p=PG[pid],r=DATA[pid].find(x=>x.id===rid),ns=$('#rst').value,ch=ns!==r[stCol(p)];r[stCol(p)]=ns;closeOv();if(ch)notify(`${rid} moved to ${ns}`,p.n,pid);toast('Record updated');render()},
+ new:v=>newForm(v),
+ set:v=>{const [k,x]=v.split('|');UI[k]=x;render()},tog:v=>{UI[v]=!UI[v];render()},
+ colph:v=>{const k=curP().id+(+v[2]-1);UI.col[k]=!UI.col[k];const g=$('#gw'),x=g.scrollLeft,y=g.scrollTop;render();const n=$('#gw');n.scrollLeft=x;n.scrollTop=y},
+ task:v=>taskDrawer(v),newtask:newTask,
+ savetask:v=>{const p=curP(),t=p.tasks.find(x=>x.id===v),d=new Date($('#ts').value+'T00:00');if(!isNaN(d))t.s=Math.round((d-TODAY)/864e5)-p.st;if($('#td'))t.d=Math.max(1,+$('#td').value||t.d);t.owner=$('#to').value;t.p=+$('#tp').value;closeOv();toast('Schedule updated');notify(`${t.n} updated`,p.n,'pj-plan');render()},
+ openproj:v=>{UI.proj=v;go('pj-plan')},
+ mail:v=>{UI.mail=+v;MAILS[v].un=0;render();sideCount()},
+ compose:v=>modal('New message',`<form id="mf2"><div class="mb"><div class="fld"><label>To</label><select name="to">${PEOPLE.map(x=>`<option ${x===v?'selected':''}>${x}</option>`).join('')}</select></div><div class="fld"><label>Subject</label><input name="s"></div><div class="fld"><label>Message</label><textarea name="b" rows="5"></textarea></div></div><div class="mf"><button type="button" class="btn" data-act="close">Cancel</button><button class="btn pri">Send</button></div></form>`),
+ chat:v=>{UI.chat=v;render()},
+ saveconn:()=>{document.querySelectorAll('[data-conn]').forEach(i=>{const k=i.dataset.conn;if(k.startsWith('app:'))CONN.apps[k.slice(4)]=i.value.trim();else CONN[k]=i.value.trim()});store.set('conn2',CONN);toast('Connection saved');render()},
+ copyleads:()=>{const csv='Name,Role,Number,Email,Company,Received\n'+LEADS.map(l=>[l.name,l.role,l.num,l.email,l.co,l.at].map(x=>'"'+String(x||'').replace(/"/g,'""')+'"').join(',')).join('\n');(navigator.clipboard?navigator.clipboard.writeText(csv):Promise.reject()).then(()=>toast('Copied to clipboard'),()=>toast('Copy is not available in this view'))}
+};
+function sideCount(){const b=document.querySelector('.side .ni[data-go="inbox"] .n');if(b){const n=unM();if(n)b.textContent=n;else b.remove()}}
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g&&!e.target.closest('[data-act]:not([data-go])')){closeOv();go(g.dataset.go);return}
+  const t=e.target.closest('[data-act]');if(t&&ACT[t.dataset.act]){ACT[t.dataset.act](t.dataset.v,t,e);return}
+  if(!e.target.closest('#npop,#bell')&&$('#npop'))$('#npop').innerHTML='';
+  if(!e.target.closest('.srch')&&$('#gsr'))$('#gsr').innerHTML=''});
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.id==='tq'){UI.q=t.value;$('#tbl').innerHTML=tbl(PG[UI.page])}
+  if(t.id==='tp')$('#tpv').textContent=t.value+'%';
+  if(t.id==='gs'){const q=t.value.toLowerCase().trim(),res=q?[...MODS.map(m=>({id:m.id,n:m.full,s:'System'})),...Object.values(PG).map(p=>({id:p.id,n:p.n,s:(MODS.find(m=>m.id===p.m)||{n:'Workspace'}).n}))].filter(x=>(x.n+' '+x.s).toLowerCase().includes(q)).slice(0,8):[];
+    $('#gsr').innerHTML=res.length?`<div class="pop">${res.map(x=>`<button data-go="${x.id}"><b>${esc(x.n)}</b> <span class="sm mute">${esc(x.s)}</span></button>`).join('')}</div>`:q?'<div class="pop"><div class="pad mute sm">No matches</div></div>':''}});
+document.addEventListener('change',e=>{if(e.target.dataset.ch==='proj'){UI.proj=e.target.value;render()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOv()});
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target,d=Object.fromEntries(new FormData(f));
+  if(f.id==='cf'){const er={name:d.name.trim()?'':'Please enter your name',role:d.role.trim()?'':'Please enter your role',num:/^[+\d][\d\s\-()]{6,}$/.test(d.num.trim())?'':'Please enter a valid phone number',email:!d.email.trim()||/^\S+@\S+\.\S+$/.test(d.email.trim())?'':'Please check this email address'};
+    Object.entries(er).forEach(([k,v])=>f.querySelector(`[data-e="${k}"]`).textContent=v);if(Object.values(er).some(Boolean))return;
+    const lead={name:d.name.trim(),role:d.role.trim(),num:d.num.trim(),email:d.email.trim(),co:S.co||L.co||'',at:new Date().toLocaleString()};LEADS.unshift(lead);store.set('leads',LEADS);
+    clappia('leads',{Name:lead.name,Role:lead.role,Number:lead.num,Email:lead.email,Company:lead.co});
+    modal('Thank you',`<div class="mb" style="text-align:center;padding:30px 24px"><div style="width:54px;height:54px;border-radius:50%;background:var(--g-s);color:var(--g);display:grid;place-items:center;margin:0 auto;font-size:24px">✓</div><h2>Your request is with us, ${esc(lead.name.split(' ')[0])}</h2><p class="mute" style="margin:0">Our team will call you on ${esc(lead.num)} to take this forward.</p></div>`,`<button class="btn pri" data-act="close">Done</button>`);if(UI.page==='settings'&&S.role)render();return}
+  if(f.id==='nf'){const p=PG[f.dataset.p],first=p.cols[0][0];if(!String(d[first]||'').trim()){$('#nfe').textContent='Please fill in '+first.toLowerCase()+'.';return}
+    const r={id:p.pre+'-'+String(1041+DATA[p.id].length).padStart(4,'0')};p.cols.forEach(c=>{let v=d[c[0]];if(c[1]==='d'){const dt=new Date(v+'T00:00');v=isNaN(dt)?0:Math.round((dt-TODAY)/864e5)}else if(c[1]==='n')v=+v||0;r[c[0]]=v});
+    DATA[p.id].unshift(r);(ADDED[S.ind+p.id]=ADDED[S.ind+p.id]||[]).unshift(r);store.set('added',ADDED);closeOv();notify(`${r.id} created`,p.n,p.id);toast('Record created');
+    const out={...r};p.cols.forEach(c=>{if(c[1]==='d')out[c[0]]=dAt(r[c[0]]).toLocaleDateString('en-GB').replace(/\//g,'-')});clappia(p.m,{Workspace:p.n,'Record ID':r.id,...out,id:undefined,Industry:ind().n,Company:S.co});render();return}
+  if(f.id==='tf2'){if(!d.n.trim()){$('#tfe').textContent='Please enter a task name.';return}const p=curP(),dt=new Date(d.s+'T00:00'),s=isNaN(dt)?3-p.st:Math.round((dt-TODAY)/864e5)-p.st,n=p.tasks.filter(t=>t.ph===+d.ph&&!t.ms).length+1;
+    const t={id:d.ph+'.'+n+'a',n:d.n.trim(),d:Math.max(1,+d.d||1),deps:[],bs:s,s,ph:+d.ph,ms:false,owner:d.o,p:0,crit:false};const i=p.tasks.findIndex(x=>x.ph===+d.ph&&x.ms);p.tasks.splice(i<0?p.tasks.length:i,0,t);closeOv();toast('Task added to schedule');render();return}
+  if(f.id==='clf'){const c=checklists().find(x=>x.id===f.dataset.c),res=c.items.map((q,i)=>({q,a:d['a'+i]||'',r:(d['r'+i]||'').trim()}));
+    const miss=res.findIndex(x=>!x.a),nr=res.findIndex(x=>x.a==='Not OK'&&!x.r);
+    if(miss>=0){$('#cle').textContent='Please answer checkpoint '+(miss+1)+'.';return}if(nr>=0){$('#cle').textContent='Please add a remark for checkpoint '+(nr+1)+' marked Not OK.';return}
+    const R=role(),x=mkSub(c,R.n,R.t,d.unit,res,Date.now());x.shift=d.shift;SUBS.unshift(x);store.set('subs',SUBS);
+    clappia(c.m,{Workspace:'Checklist',Checklist:c.n,'Record ID':x.id,Unit:x.unit,Shift:d.shift,'Submitted by':x.by,Role:x.role,'Compliance (%)':x.score,Issues:x.nok,Status:subSt(x),Details:res.map((r,i)=>(i+1)+'. '+r.q+': '+r.a+(r.r?' ('+r.r+')':'')).join(' | '),Industry:ind().n,Company:S.co});
+    modal('Checklist submitted',`<div class="mb" style="text-align:center;padding:30px 24px"><div style="width:54px;height:54px;border-radius:50%;background:var(--g-s);color:var(--g);display:grid;place-items:center;margin:0 auto;font-size:24px">✓</div><h2>${esc(c.n)}</h2><p class="mute" style="margin:0">${x.score}% compliant, ${x.nok} issue${x.nok===1?'':'s'} flagged. Your supervisors can see this on their dashboard now. Switch to a manager role to view it.</p></div>`,`<button class="btn" data-act="logout">Switch role</button><button class="btn pri" data-act="close">Done</button>`);render();return}
+  if(f.id==='mf2'){closeOv();toast('Message sent to '+d.to);return}
+  if(f.id==='sendf'){const i=$('#chin'),v=i.value.trim();if(!v)return;const c=CHATS[UI.chat],k=UI.chat;c.ms.push({w:role().n,me:1,t:v,m:'Now'});render();$('#chin').focus();
+    setTimeout(()=>{const who=c.g?PEOPLE.filter(x=>x!==role().n)[hash(v)%9]:k;c.ms.push({w:who,t:['Noted, I will update the record today.','Thanks. Sharing the details in the next ten minutes.','Agreed. Let us review it in the 10:30 meeting.','On it. I have assigned it to my team.','Good catch. I will raise it in the system right away.'][hash(v+c.ms.length)%5],m:'Now'});if(UI.page==='chat'&&UI.chat===k)render()},1300)}});
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(S.role&&h&&h!==UI.page&&(PG[h]||MODS.find(m=>m.id===h)||['home','inbox','chat','settings','checks'].includes(h)))go(h)});
+let rz;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{if(S.role&&UI.page==='pj-plan')render()},200)});
+
+/* ============ boot ============ */
+if(S.role&&S.co){build();const h=location.hash.slice(1);if(PG[h]||MODS.find(m=>m.id===h)||['inbox','chat','settings','checks'].includes(h)){UI.page=h;UI.open=PG[h]?.m||h}else UI.open=role().home==='home'?'projects':role().home;shell()}else vLogin();
+</script>
+</body></html>

@@ -804,6 +804,7 @@ async function clappia(appKey,data){
 /* ============ overlays ============ */
 const closeOv=()=>$('#ovr').innerHTML='';
 function modal(title,body,foot,dr){$('#ovr').innerHTML=`<div class="ov ${dr?'dr':''}" data-act="ovbg"><div class="modal" role="dialog" aria-label="${esc(title)}"><div class="mh"><h3 style="flex:1">${esc(title)}</h3><button class="ib" data-act="close" aria-label="Close" style="border:0">${ic('x')}</button></div>${body}${foot?`<div class="mf">${foot}</div>`:''}</div></div>`}
+function contactEmbed(){modal('Contact us',`<iframe src="https://one.embed-app.clappia.com/app/REQ242089" title="Contact us form" loading="eager" allow="geolocation; camera; microphone" style="display:block;width:100%;height:min(74vh,720px);border:0;border-radius:0 0 16px 16px;background:#fff"></iframe>`);const m=document.querySelector('#ovr .modal');m.style.width='min(720px,100%)';m.style.overflow='hidden'}
 function contactForm(){
   modal('Contact us',`<form id="cf" novalidate><div class="mb"><p class="mute" style="margin:0">Tell us who you are and our team will call you back to plan this for your plant.</p>
    <div class="fld"><label>Name <i>*</i></label><input name="name" autocomplete="name"><span class="err" data-e="name"></span></div>
@@ -852,7 +853,7 @@ function vLogin(){
 
 /* ============ actions ============ */
 const ACT={
- contact:contactForm,close:closeOv,ovbg:(v,t,e)=>{if(e.target===t)closeOv()},
+ contact:contactEmbed,close:closeOv,ovbg:(v,t,e)=>{if(e.target===t)closeOv()},
  menu:()=>$('#side').classList.toggle('open'),
  logout:()=>{closeOv();L={step:1,role:S.role,ind:S.ind,co:S.co};S.role=null;store.set('s',S);vLogin()},
  lrole:v=>{L.role=v;L.step=2;vLogin()},lind:v=>{L.ind=v;vLogin()},lco:v=>{L.co=v;vLogin()},lback:()=>{L.step=1;vLogin()},
